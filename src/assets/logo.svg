@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="960" height="420">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Bebas+Neue&display=swap');
+    </style>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#818CF8"/>
+      <stop offset="55%"  stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+  </defs>
+
+  <!-- dark background -->
+  <rect width="960" height="420" fill="#0f0f0f" rx="0"/>
+
+  <!-- "Resu" — Dancing Script, outlined stroke only (signature feel) -->
+  <text
+    x="12" y="345"
+    font-family="'Dancing Script', 'Brush Script MT', cursive"
+    font-weight="700"
+    font-size="265"
+    fill="none"
+    stroke="url(#g)"
+    stroke-width="2"
+    stroke-linejoin="round"
+    stroke-linecap="round">Resu</text>
+
+  <!-- "FLOW" — Bebas Neue, outlined, geometric + straight -->
+  <text
+    x="438" y="308"
+    font-family="'Bebas Neue', Impact, 'Arial Narrow', sans-serif"
+    font-size="232"
+    fill="none"
+    stroke="url(#g)"
+    stroke-width="2"
+    stroke-linecap="square"
+    stroke-linejoin="miter">FLOW</text>
+</svg>
