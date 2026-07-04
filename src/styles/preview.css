@@ -52,8 +52,10 @@
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
   border-radius: 2px;
   transform-origin: top center;
-  overflow: visible;
+  overflow: hidden;
   position: relative;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .preview-page-break {

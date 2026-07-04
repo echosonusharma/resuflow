@@ -2,7 +2,8 @@ import React from 'react';
 import { Document, Page, View, Text } from '@react-pdf/renderer';
 import { readCustomize, fullNameOf, visibleSectionsOf } from '../shared/common.js';
 import { formatDateRange } from '../shared/formatDate.js';
-import PdfSectionBody from './shared/PdfSectionBody.jsx';
+import PdfSectionBody, { PdfFooter } from './shared/PdfSectionBody.jsx';
+import { getContactFields } from '../shared/contactFields.js';
 import { getTemplate } from '../index.js';
 
 const PAGE_SIZE_MAP = { A4: 'A4', Letter: 'LETTER', A5: 'A5' };
@@ -14,13 +15,11 @@ export default function CompactAtsPdf({ personal, sections, customize }) {
   const visibleSections = visibleSectionsOf(sections);
   const fullName = fullNameOf(personal);
 
-  const contactParts = [
-    personal.email,
-    personal.phone,
-    personal.location,
-    c.showLinkedin && personal.linkedin,
-    c.showWebsite && personal.website,
-  ].filter(Boolean);
+  const hiddenKeys = [];
+  if (c.showLinkedin === false) hiddenKeys.push('linkedin');
+  if (c.showWebsite === false) hiddenKeys.push('website');
+  const contactParts = getContactFields(personal, { hiddenKeys })
+    .map(({ display, label }) => (label ? `${label}: ${display}` : display));
 
   const headingStyle = {
     fontSize: c.headingSize,
@@ -49,12 +48,12 @@ export default function CompactAtsPdf({ personal, sections, customize }) {
         {/* Header */}
         <View style={{ marginBottom: 14 }}>
           {c.showName && (
-            <Text style={{ fontSize: c.nameSize, fontWeight: 700 }}>
+            <Text style={{ fontSize: c.nameSize, fontWeight: 700, lineHeight: 1.2 }}>
               {fullName || 'Your Name'}
             </Text>
           )}
           {c.showTitle && personal.title && (
-            <Text style={{ fontSize: c.titleSize }}>{personal.title}</Text>
+            <Text style={{ fontSize: c.titleSize, lineHeight: 1.2 }}>{personal.title}</Text>
           )}
           {c.showContact && contactParts.length > 0 && (
             <Text style={{ fontSize: c.smallSize, marginTop: 3, color: '#222' }}>
@@ -80,12 +79,12 @@ export default function CompactAtsPdf({ personal, sections, customize }) {
             </View>
 
             {/* Experience / Education: compact inline format */}
-            {(section.type === 'experience' || section.type === 'education') ? (
+            {['experience', 'volunteering', 'education'].includes(section.type) ? (
               <View>
                 {section.entries.map(entry => {
-                  const title = section.type === 'experience' ? entry.title : entry.degree;
-                  const org = section.type === 'experience' ? entry.company : entry.school;
-                  const current = section.type === 'experience' ? entry.current : false;
+                  const title = section.type === 'education' ? entry.degree : entry.title;
+                  const org = section.type === 'education' ? entry.school : entry.company;
+                  const current = section.type === 'education' ? false : entry.current;
                   const parts = [title, org && `${org}`, entry.location && `${entry.location}`].filter(Boolean);
                   return (
                     <View key={entry.id} wrap={false} style={{ marginBottom: c.entryGap }}>
@@ -122,6 +121,8 @@ export default function CompactAtsPdf({ personal, sections, customize }) {
             )}
           </View>
         ))}
+
+        <PdfFooter personal={personal} customize={customize} />
       </Page>
     </Document>
   );

@@ -413,6 +413,8 @@
   color: var(--color-text-secondary);
   background: #F9FAFB;
   align-items: center;
+  position: relative;
+  cursor: pointer;
 }
 .cz-palette-custom:hover { background: var(--color-indigo-50); }
 
@@ -466,8 +468,8 @@
   background: #E5E7EB;
 }
 .cz-thumb-classic-clear { background: linear-gradient(135deg, #fff 60%, #f0f0f0 100%); }
-.cz-thumb-atlantic-blue { background: linear-gradient(135deg, #1E3A5F 40%, #fff 40%); }
-.cz-thumb-mercury-flow { background: linear-gradient(180deg, #F8F6F4 30%, #fff 30%); }
+.cz-thumb-slate-sidebar { background: linear-gradient(90deg, #4A4A5A 34%, #fff 34%); }
+.cz-thumb-compact-ats { background: #fff; border: 1px dashed #999; }
 .cz-browse-btn {
   position: absolute;
   inset: 0;

@@ -2,7 +2,7 @@ import React from 'react';
 import { Document, Page, View, Text, Image } from '@react-pdf/renderer';
 import { registerFonts, parseFontFamily } from './shared/pdfFonts.js';
 import { readCustomize, fullNameOf, visibleSectionsOf } from '../shared/common.js';
-import PdfSectionBody, { PdfContactRow } from './shared/PdfSectionBody.jsx';
+import PdfSectionBody, { PdfContactRow, PdfFooter } from './shared/PdfSectionBody.jsx';
 import { getTemplate } from '../index.js';
 
 registerFonts();
@@ -97,7 +97,13 @@ export default function SlateSidebarPdf({ personal, sections, customize }) {
             <View style={{ alignItems: 'center', marginBottom: 14 }}>
               <Image
                 src={personal.photo}
-                style={{ width: 90, height: 90, borderRadius: 45 }}
+                style={{
+                  width: c.photoSize,
+                  height: c.photoSize,
+                  borderRadius: c.photoShape.borderRadius === '50%'
+                    ? c.photoSize / 2
+                    : c.photoShape.borderRadius,
+                }}
               />
             </View>
           )}
@@ -142,6 +148,7 @@ export default function SlateSidebarPdf({ personal, sections, customize }) {
                 fontSize: c.nameSize,
                 fontFamily: headingFont,
                 fontWeight: 700,
+                lineHeight: 1.2,
                 color: c.applyTo.name ? c.accent : '#1a1a2e',
                 marginBottom: 4,
               }}
@@ -153,6 +160,7 @@ export default function SlateSidebarPdf({ personal, sections, customize }) {
             <Text
               style={{
                 fontSize: c.titleSize,
+                lineHeight: 1.2,
                 color: c.applyTo.jobTitle ? c.accent : '#555',
                 marginBottom: 16,
               }}
@@ -169,6 +177,8 @@ export default function SlateSidebarPdf({ personal, sections, customize }) {
             </View>
           ))}
         </View>
+
+        <PdfFooter personal={personal} customize={customize} />
       </Page>
     </Document>
   );

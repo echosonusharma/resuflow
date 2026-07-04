@@ -7,7 +7,7 @@ export default function DesignTemplates({ setView }) {
       <p className="cz-subtitle">Update your entire resume design with one click ✦</p>
       <div className="cz-template-browse">
         <div className="cz-template-thumb-row">
-          {['classic-clear', 'atlantic-blue', 'mercury-flow'].map(t => (
+          {['classic-clear', 'slate-sidebar', 'compact-ats'].map(t => (
             <div key={t} className={`cz-template-thumb cz-thumb-${t}`} />
           ))}
         </div>

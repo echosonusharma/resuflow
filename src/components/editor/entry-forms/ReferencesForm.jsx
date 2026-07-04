@@ -2,7 +2,7 @@ import React from 'react';
 import { useSections } from '../../../hooks/index.js';
 import FormGroup from './FormGroup.jsx';
 
-export default function CertificationsForm({ sectionId, entry, labels = {} }) {
+export default function ReferencesForm({ sectionId, entry }) {
   const { updateEntry } = useSections();
   function update(data) {
     updateEntry(sectionId, entry.id, data);
@@ -10,30 +10,30 @@ export default function CertificationsForm({ sectionId, entry, labels = {} }) {
   return (
     <div className="entry-form">
       <div className="entry-form-row single">
-        <FormGroup label={labels.name || 'Certificate Name'}>
+        <FormGroup label="Name">
           <input
             className="form-input"
             value={entry.name}
             onChange={e => update({ name: e.target.value })}
-            placeholder={labels.namePlaceholder || 'e.g. AWS Certified Developer'}
+            placeholder="e.g. Jordan Smith"
           />
         </FormGroup>
       </div>
       <div className="entry-form-row">
-        <FormGroup label={labels.issuer || 'Issuing Organization'}>
+        <FormGroup label="Position / Company">
           <input
             className="form-input"
-            value={entry.issuer}
-            onChange={e => update({ issuer: e.target.value })}
-            placeholder="e.g. Amazon Web Services"
+            value={entry.position || ''}
+            onChange={e => update({ position: e.target.value })}
+            placeholder="e.g. Engineering Manager, Acme Corp"
           />
         </FormGroup>
-        <FormGroup label="Date">
+        <FormGroup label="Contact">
           <input
             className="form-input"
-            type="month"
-            value={entry.date}
-            onChange={e => update({ date: e.target.value })}
+            value={entry.contact || ''}
+            onChange={e => update({ contact: e.target.value })}
+            placeholder="e.g. jordan@acme.com · +1 555 000 0000"
           />
         </FormGroup>
       </div>

@@ -1,25 +1,13 @@
 import ClassicClear, { meta as classicClearMeta } from './classic-clear.template.jsx';
-import AtlanticBlue, { meta as atlanticBlueMeta } from './atlantic-blue.template.jsx';
-import MercuryFlow, { meta as mercuryFlowMeta } from './mercury-flow.template.jsx';
-import IvoryProfessional, { meta as ivoryProfessionalMeta } from './ivory-professional.template.jsx';
 import SlateSidebar, { meta as slateSidebarMeta } from './slate-sidebar.template.jsx';
-import NordicMinimal, { meta as nordicMinimalMeta } from './nordic-minimal.template.jsx';
-import TimelinePro, { meta as timelineProMeta } from './timeline-pro.template.jsx';
-import BoldBanner, { meta as boldBannerMeta } from './bold-banner.template.jsx';
 import CompactAts, { meta as compactAtsMeta } from './compact-ats.template.jsx';
-import DuoTone, { meta as duoToneMeta } from './duo-tone.template.jsx';
+import ObsidianEdge, { meta as obsidianEdgeMeta } from './obsidian-edge.template.jsx';
 
 export const TEMPLATES = {
   'classic-clear': { component: ClassicClear, meta: classicClearMeta },
-  'atlantic-blue': { component: AtlanticBlue, meta: atlanticBlueMeta },
-  'mercury-flow': { component: MercuryFlow, meta: mercuryFlowMeta },
-  'ivory-professional': { component: IvoryProfessional, meta: ivoryProfessionalMeta },
   'slate-sidebar': { component: SlateSidebar, meta: slateSidebarMeta },
-  'nordic-minimal': { component: NordicMinimal, meta: nordicMinimalMeta },
-  'timeline-pro': { component: TimelinePro, meta: timelineProMeta },
-  'bold-banner': { component: BoldBanner, meta: boldBannerMeta },
   'compact-ats': { component: CompactAts, meta: compactAtsMeta },
-  'duo-tone': { component: DuoTone, meta: duoToneMeta },
+  'obsidian-edge': { component: ObsidianEdge, meta: obsidianEdgeMeta },
 };
 
 export function getTemplate(id) {

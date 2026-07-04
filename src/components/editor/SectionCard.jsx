@@ -1,10 +1,12 @@
 import React, { useState, useRef } from 'react';
 import {
   ChevronDown, Eye, EyeOff, X, Plus, Trash2,
-  User, Briefcase, Brain, GraduationCap, Globe, Award, FileText
+  User, Briefcase, Brain, GraduationCap, Globe, Award, FileText,
+  FolderKanban, HeartHandshake, Trophy, BookOpen, Newspaper, Sparkles, Users
 } from 'lucide-react';
 import { useSections } from '../../hooks/index.js';
 import EntryForm from './entry-forms/index.jsx';
+import { confirmDialog } from '../ui/dialog.jsx';
 
 const ICON_MAP = {
   User: <User size={14} />,
@@ -13,7 +15,14 @@ const ICON_MAP = {
   GraduationCap: <GraduationCap size={14} />,
   Globe: <Globe size={14} />,
   Award: <Award size={14} />,
-  FileText: <FileText size={14} />
+  FileText: <FileText size={14} />,
+  FolderKanban: <FolderKanban size={14} />,
+  HeartHandshake: <HeartHandshake size={14} />,
+  Trophy: <Trophy size={14} />,
+  BookOpen: <BookOpen size={14} />,
+  Newspaper: <Newspaper size={14} />,
+  Sparkles: <Sparkles size={14} />,
+  Users: <Users size={14} />
 };
 
 function getEntrySummary(type, entry) {
@@ -30,6 +39,20 @@ function getEntrySummary(type, entry) {
       return entry.language || 'Language';
     case 'certifications':
       return entry.name || 'New certification';
+    case 'awards':
+      return entry.name || 'New award';
+    case 'courses':
+      return entry.name || 'New course';
+    case 'publications':
+      return entry.name || 'New publication';
+    case 'volunteering':
+      return [entry.title, entry.company].filter(Boolean).join(', ') || 'New volunteering';
+    case 'projects':
+      return entry.title || 'New project';
+    case 'interests':
+      return entry.category || entry.items || 'Interests';
+    case 'references':
+      return entry.name || 'New reference';
     default:
       return entry.content ? entry.content.slice(0, 50) : 'Entry';
   }
@@ -99,10 +122,12 @@ export default function SectionCard({ section }) {
     addEntry(section.id, section.type);
   }
 
-  function deleteSection() {
-    if (window.confirm(`Delete the "${section.heading}" section and all its entries?`)) {
-      removeSection(section.id);
-    }
+  async function deleteSection() {
+    const ok = await confirmDialog(
+      `Delete the "${section.heading}" section and all its entries?`,
+      { title: 'Delete section', confirmLabel: 'Delete', danger: true }
+    );
+    if (ok) removeSection(section.id);
   }
 
   return (

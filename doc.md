@@ -66,7 +66,8 @@ src/
 │   └── useActiveTemplate.js        { templateId, component, meta, customize, setTemplate }
 │
 ├── data/
-│   └── sampleData.js               Initial state (Sonu Sharma demo data)
+│   ├── sampleData.js               Initial state (re-exports demoData)
+│   └── demoData.json               Aria Voss fictional demo persona
 │
 ├── utils/
 │   └── exportPdf.js                exportPdf() — multi-page PDF slicing, footer text/page numbers, getPageFormat()

@@ -1,7 +1,8 @@
 import React from 'react';
-import { Mail, Phone, MapPin, Linkedin, Globe } from 'lucide-react';
 import { PALETTES } from './index.js';
 import { formatDate, formatDateRange } from './shared/formatDate.js';
+import { getContactFields, displayValue } from './shared/contactFields.js';
+import { sectionKind } from './shared/common.js';
 
 export const meta = {
   id: 'classic-clear',
@@ -68,7 +69,7 @@ export default function ClassicClear({ personal, sections, customize = {} }) {
 
   const basePt = fontSize.base;
   const palette = PALETTES[colors.paletteIndex ?? 0];
-  const accent = palette?.accent ?? '#1E3A5F';
+  const accent = colors.customAccent || palette?.accent || '#1E3A5F';
   const applyTo = colors.accentApplyTo || {};
   const isUppercase = hdg.uppercase ?? true;
   const hasUnderline = hdg.underline ?? true;
@@ -136,41 +137,36 @@ export default function ClassicClear({ personal, sections, customize = {} }) {
           <div className="cc-job-title" style={titleStyle}>{personal.title}</div>
         )}
 
-        {showContact && <div className="cc-contact-row">
-          {personal.email && (
-            <span className="cc-contact-item">
-              <Mail size={11} style={{ color: contactIconColor }} />{personal.email}
-            </span>
-          )}
-          {personal.phone && (
-            <span className="cc-contact-item">
-              <Phone size={11} style={{ color: contactIconColor }} />{personal.phone}
-            </span>
-          )}
-          {personal.location && (
-            <span className="cc-contact-item">
-              <MapPin size={11} style={{ color: contactIconColor }} />{personal.location}
-            </span>
-          )}
-          {personal.linkedin && showLinkedin && (
-            <span className="cc-contact-item">
-              <Linkedin size={11} style={{ color: applyTo.linkIcons ? accent : contactIconColor }} />
-              {hyperlink ? <a href={personal.linkedin} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>{personal.linkedin}</a> : personal.linkedin}
-            </span>
-          )}
-          {personal.website && showWebsite && (
-            <span className="cc-contact-item">
-              <Globe size={11} style={{ color: applyTo.linkIcons ? accent : contactIconColor }} />
-              {hyperlink ? <a href={personal.website} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>{personal.website}</a> : personal.website}
-            </span>
-          )}
-        </div>}
+        {showContact && (() => {
+          const hiddenKeys = [];
+          if (!showLinkedin) hiddenKeys.push('linkedin');
+          if (!showWebsite) hiddenKeys.push('website');
+          const contactFields = getContactFields(personal, { hiddenKeys });
+          const linkKeys = new Set(['linkedin', 'website', 'github']);
+          return (
+            <div className="cc-contact-row">
+              {contactFields.map(({ key, icon: Icon, label, href, display }) => {
+                const iconColor = linkKeys.has(key) && applyTo.linkIcons ? accent : contactIconColor;
+                const text = label ? `${label}: ${display}` : display;
+                return (
+                  <span className="cc-contact-item" key={key}>
+                    <Icon size={11} style={{ color: iconColor }} />
+                    {hyperlink && href
+                      ? <a href={href} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>{text}</a>
+                      : text}
+                  </span>
+                );
+              })}
+            </div>
+          );
+        })()}
       </div>
 
       {/* Sections */}
       {visibleSections.map(section => {
         const visibleEntries = section.entries.filter(e => e.visible);
         if (!visibleEntries.length) return null;
+        const kind = sectionKind(section.type);
 
         return (
           <div className="cc-section" key={section.id} style={{ marginBottom: entryGap }}>
@@ -178,14 +174,14 @@ export default function ClassicClear({ personal, sections, customize = {} }) {
               {section.heading}
             </div>
 
-            {section.type === 'profile' && visibleEntries.map(entry => (
+            {kind === 'profile' && visibleEntries.map(entry => (
               <p className="cc-profile-text" key={entry.id}
                 style={{ fontSize: `${basePt}pt`, lineHeight: spacing.lineHeight ?? 1.4 }}>
                 {entry.content}
               </p>
             ))}
 
-            {section.type === 'experience' && visibleEntries.map(entry => (
+            {kind === 'experience' && visibleEntries.map(entry => (
               <div className="cc-entry" key={entry.id} style={{ marginBottom: entryGap }}>
                 <div className="cc-entry-header">
                   <div>
@@ -213,7 +209,7 @@ export default function ClassicClear({ personal, sections, customize = {} }) {
               </div>
             ))}
 
-            {section.type === 'skills' && (
+            {kind === 'skills' && (
               <div className="cc-skills-grid">
                 {visibleEntries.map(entry => (
                   <div className="cc-skill-item" key={entry.id}
@@ -227,7 +223,7 @@ export default function ClassicClear({ personal, sections, customize = {} }) {
               </div>
             )}
 
-            {section.type === 'education' && visibleEntries.map(entry => (
+            {kind === 'education' && visibleEntries.map(entry => (
               <div className="cc-entry" key={entry.id} style={{ marginBottom: entryGap }}>
                 <div className="cc-entry-header">
                   <div>
@@ -255,7 +251,7 @@ export default function ClassicClear({ personal, sections, customize = {} }) {
               </div>
             ))}
 
-            {section.type === 'languages' && (
+            {kind === 'languages' && (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px 0' }}>
                 {visibleEntries.map(entry => (
                   <div className="cc-lang-row" key={entry.id}>
@@ -274,7 +270,7 @@ export default function ClassicClear({ personal, sections, customize = {} }) {
               </div>
             )}
 
-            {section.type === 'certifications' && visibleEntries.map(entry => (
+            {kind === 'certifications' && visibleEntries.map(entry => (
               <div className="cc-cert-entry" key={entry.id} style={{ marginBottom: entryGap }}>
                 <div>
                   <div className="cc-cert-name" style={{ fontWeight: 600, fontSize: `${basePt}pt` }}>{entry.name}</div>
@@ -284,11 +280,49 @@ export default function ClassicClear({ personal, sections, customize = {} }) {
               </div>
             ))}
 
-            {section.type === 'custom' && visibleEntries.map(entry => (
-              <p className="cc-profile-text" key={entry.id}
-                style={{ fontSize: `${basePt}pt`, lineHeight: spacing.lineHeight ?? 1.4 }}>
-                {entry.content}
-              </p>
+            {kind === 'projects' && visibleEntries.map(entry => (
+              <div className="cc-entry" key={entry.id} style={{ marginBottom: entryGap }}>
+                <div className="cc-entry-header">
+                  <div>
+                    <div className="cc-entry-title" style={entryHeaderStyle}>{entry.title}</div>
+                    {entry.link && (
+                      <div className="cc-entry-subtitle"
+                        style={{ color: applyTo.entrySubtitle ? accent : '#555', fontSize: `${basePt - 0.5}pt` }}>
+                        {displayValue('website', entry.link)}
+                      </div>
+                    )}
+                  </div>
+                  <div className="cc-entry-date" style={dateStyle}>
+                    {formatDateRange(entry.startDate, entry.endDate, false, dateFormat, lang)}
+                  </div>
+                </div>
+                {entry.bullets?.filter(Boolean).length > 0 && (
+                  <ul className="cc-bullets" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                    {entry.bullets.filter(Boolean).map((b, i) => (
+                      <li className="cc-bullet" key={i}
+                        style={{ fontSize: `${basePt}pt`, lineHeight: spacing.lineHeight ?? 1.4 }}>
+                        {bullet && <span style={{ marginRight: 6, color: applyTo.dots ? accent : 'inherit' }}>{bullet}</span>}
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+
+            {kind === 'references' && visibleEntries.map(entry => (
+              <div className="cc-entry" key={entry.id} style={{ marginBottom: entryGap }}>
+                <div className="cc-entry-title" style={entryHeaderStyle}>{entry.name}</div>
+                {entry.position && (
+                  <div className="cc-entry-subtitle"
+                    style={{ color: applyTo.entrySubtitle ? accent : '#555', fontSize: `${basePt - 0.5}pt` }}>
+                    {entry.position}
+                  </div>
+                )}
+                {entry.contact && (
+                  <div style={{ fontSize: `${basePt}pt` }}>{entry.contact}</div>
+                )}
+              </div>
             ))}
           </div>
         );

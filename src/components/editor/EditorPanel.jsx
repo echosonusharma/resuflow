@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
-  Plus, User, Briefcase, Brain, GraduationCap, Globe, Award, FileText, X
+  Plus, User, Briefcase, Brain, GraduationCap, Globe, Award, FileText, X,
+  FolderKanban, HeartHandshake, Trophy, BookOpen, Newspaper, Sparkles, Users
 } from 'lucide-react';
 import { useSections } from '../../hooks/index.js';
 import PersonalInfoCard from './PersonalInfoCard.jsx';
@@ -12,6 +13,13 @@ const SECTION_TYPES = [
   { type: 'skills', label: 'Skills', icon: <Brain size={20} /> },
   { type: 'languages', label: 'Languages', icon: <Globe size={20} /> },
   { type: 'certifications', label: 'Certifications', icon: <Award size={20} /> },
+  { type: 'projects', label: 'Projects', icon: <FolderKanban size={20} /> },
+  { type: 'volunteering', label: 'Volunteering', icon: <HeartHandshake size={20} /> },
+  { type: 'awards', label: 'Awards', icon: <Trophy size={20} /> },
+  { type: 'courses', label: 'Courses', icon: <BookOpen size={20} /> },
+  { type: 'publications', label: 'Publications', icon: <Newspaper size={20} /> },
+  { type: 'interests', label: 'Interests', icon: <Sparkles size={20} /> },
+  { type: 'references', label: 'References', icon: <Users size={20} /> },
   { type: 'custom', label: 'Custom', icon: <FileText size={20} /> }
 ];
 

@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, Image } from '@react-pdf/renderer';
+import { View, Text, Image, Link } from '@react-pdf/renderer';
 import { formatDate, formatDateRange } from '../../shared/formatDate.js';
+import { getContactFields, displayValue } from '../../shared/contactFields.js';
+import { sectionKind } from '../../shared/common.js';
 
 /**
  * PdfContactRow — renders contact items separated by bullet dividers.
@@ -23,25 +25,62 @@ export function PdfContactRow({ personal, c, iconColor, itemStyle = {}, stacked 
     ...itemStyle,
   };
 
-  const items = [];
-  if (personal.email) items.push(personal.email);
-  if (personal.phone) items.push(personal.phone);
-  if (personal.location) items.push(personal.location);
-  if (personal.linkedin && c.showLinkedin !== false) items.push(personal.linkedin);
-  if (personal.website && c.showWebsite !== false) items.push(personal.website);
+  const hiddenKeys = [];
+  if (c.showLinkedin === false) hiddenKeys.push('linkedin');
+  if (c.showWebsite === false) hiddenKeys.push('website');
+  const items = getContactFields(personal, { hiddenKeys });
 
   if (!items.length) return null;
 
   return (
     <View style={containerStyle}>
-      {items.map((value, i) => (
-        <React.Fragment key={i}>
-          {i > 0 && !stacked && (
-            <Text style={{ ...baseItemStyle, color: iconColor || '#555', marginHorizontal: 6 }}>•</Text>
-          )}
-          <Text style={baseItemStyle}>{value}</Text>
-        </React.Fragment>
-      ))}
+      {items.map(({ key, label, display, href }, i) => {
+        const text = label ? `${label}: ${display}` : display;
+        return (
+          <React.Fragment key={key}>
+            {i > 0 && !stacked && (
+              <Text style={{ ...baseItemStyle, color: iconColor || '#555', marginHorizontal: 6 }}>•</Text>
+            )}
+            {c.hyperlink && href
+              ? <Link src={href} style={{ ...baseItemStyle, color: baseItemStyle.color, textDecoration: 'underline' }}>{text}</Link>
+              : <Text style={baseItemStyle}>{text}</Text>}
+          </React.Fragment>
+        );
+      })}
+    </View>
+  );
+}
+
+/**
+ * PdfFooter — fixed footer on every page: optional text + page numbers.
+ */
+export function PdfFooter({ personal, customize }) {
+  const f = customize?.footer || {};
+  const fullName = [personal.firstName, personal.lastName].filter(Boolean).join(' ');
+  const text =
+    f.text === 'name' ? fullName :
+    f.text === 'email' ? (personal.email || '') :
+    f.text === 'custom' ? (f.customText || '') : '';
+  if (!text && !f.pageNumbers) return null;
+  return (
+    <View
+      fixed
+      style={{
+        position: 'absolute',
+        bottom: 14,
+        left: 40,
+        right: 40,
+        flexDirection: 'row',
+        justifyContent: text ? 'space-between' : 'flex-end',
+      }}
+    >
+      {text ? <Text style={{ fontSize: 8, color: '#888' }}>{text}</Text> : null}
+      {f.pageNumbers && (
+        <Text
+          style={{ fontSize: 8, color: '#888' }}
+          render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}
+        />
+      )}
     </View>
   );
 }
@@ -116,9 +155,8 @@ export default function PdfSectionBody({ section, c, twoColLang = false }) {
     </View>
   );
 
-  switch (section.type) {
+  switch (sectionKind(section.type)) {
     case 'profile':
-    case 'custom':
       return (
         <View>
           {section.entries.map(entry => (
@@ -144,6 +182,28 @@ export default function PdfSectionBody({ section, c, twoColLang = false }) {
           {section.entries.map(entry =>
             renderDatedEntry(entry, entry.degree, [entry.school, entry.location], false)
           )}
+        </View>
+      );
+
+    case 'projects':
+      return (
+        <View>
+          {section.entries.map(entry =>
+            renderDatedEntry(entry, entry.title, [entry.link ? displayValue('website', entry.link) : ''], false)
+          )}
+        </View>
+      );
+
+    case 'references':
+      return (
+        <View>
+          {section.entries.map(entry => (
+            <View key={entry.id} wrap={false} style={{ marginBottom: c.entryGap }}>
+              <Text style={{ ...textStyle, fontWeight: 700 }}>{entry.name}</Text>
+              {entry.position ? <Text style={subtitleStyle}>{entry.position}</Text> : null}
+              {entry.contact ? <Text style={textStyle}>{entry.contact}</Text> : null}
+            </View>
+          ))}
         </View>
       );
 

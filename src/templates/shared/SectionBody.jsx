@@ -1,5 +1,7 @@
 import React from 'react';
 import { formatDate, formatDateRange } from './formatDate.js';
+import { sectionKind } from './common.js';
+import { displayValue } from './contactFields.js';
 
 /**
  * Renders the entries of one section by type, using values derived by
@@ -54,9 +56,8 @@ export default function SectionBody({ section, c, styles = {} }) {
     </div>
   );
 
-  switch (section.type) {
+  switch (sectionKind(section.type)) {
     case 'profile':
-    case 'custom':
       return section.entries.map(entry => (
         <p key={entry.id} style={{ ...st.text, marginBottom: c.entryGap }}>{entry.content}</p>
       ));
@@ -70,6 +71,20 @@ export default function SectionBody({ section, c, styles = {} }) {
       return section.entries.map(entry =>
         renderDatedEntry(entry, entry.degree, [entry.school, entry.location], false)
       );
+
+    case 'projects':
+      return section.entries.map(entry =>
+        renderDatedEntry(entry, entry.title, [entry.link ? displayValue('website', entry.link) : ''], false)
+      );
+
+    case 'references':
+      return section.entries.map(entry => (
+        <div key={entry.id} style={{ marginBottom: c.entryGap }}>
+          <div style={{ ...st.text, fontWeight: 600 }}>{entry.name}</div>
+          {entry.position && <div style={st.subtitle}>{entry.position}</div>}
+          {entry.contact && <div style={st.text}>{entry.contact}</div>}
+        </div>
+      ));
 
     case 'skills':
       return section.entries.map(entry => (

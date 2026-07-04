@@ -3,27 +3,15 @@ import { pdf } from '@react-pdf/renderer';
 import { registerFonts } from '../templates/pdf/shared/pdfFonts.js';
 
 import ClassicClearPdf from '../templates/pdf/classic-clear.pdf.jsx';
-import AtlanticBluePdf from '../templates/pdf/atlantic-blue.pdf.jsx';
-import MercuryFlowPdf from '../templates/pdf/mercury-flow.pdf.jsx';
-import IvoryProfessionalPdf from '../templates/pdf/ivory-professional.pdf.jsx';
 import SlateSidebarPdf from '../templates/pdf/slate-sidebar.pdf.jsx';
-import NordicMinimalPdf from '../templates/pdf/nordic-minimal.pdf.jsx';
-import TimelineProPdf from '../templates/pdf/timeline-pro.pdf.jsx';
-import BoldBannerPdf from '../templates/pdf/bold-banner.pdf.jsx';
 import CompactAtsPdf from '../templates/pdf/compact-ats.pdf.jsx';
-import DuoTonePdf from '../templates/pdf/duo-tone.pdf.jsx';
+import ObsidianEdgePdf from '../templates/pdf/obsidian-edge.pdf.jsx';
 
 const PDF_TEMPLATES = {
-  'classic-clear':       ClassicClearPdf,
-  'atlantic-blue':       AtlanticBluePdf,
-  'mercury-flow':        MercuryFlowPdf,
-  'ivory-professional':  IvoryProfessionalPdf,
-  'slate-sidebar':       SlateSidebarPdf,
-  'nordic-minimal':      NordicMinimalPdf,
-  'timeline-pro':        TimelineProPdf,
-  'bold-banner':         BoldBannerPdf,
-  'compact-ats':         CompactAtsPdf,
-  'duo-tone':            DuoTonePdf,
+  'classic-clear': ClassicClearPdf,
+  'slate-sidebar': SlateSidebarPdf,
+  'compact-ats':   CompactAtsPdf,
+  'obsidian-edge': ObsidianEdgePdf,
 };
 
 export async function exportPdfReact({ personal, sections, customize, templateId }) {

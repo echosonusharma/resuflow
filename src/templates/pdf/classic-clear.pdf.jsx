@@ -2,7 +2,7 @@ import React from 'react';
 import { Document, Page, View, Text, Image } from '@react-pdf/renderer';
 import { registerFonts, parseFontFamily } from './shared/pdfFonts.js';
 import { readCustomize, fullNameOf, visibleSectionsOf } from '../shared/common.js';
-import PdfSectionBody, { PdfContactRow } from './shared/PdfSectionBody.jsx';
+import PdfSectionBody, { PdfContactRow, PdfFooter } from './shared/PdfSectionBody.jsx';
 import { getTemplate } from '../index.js';
 
 registerFonts();
@@ -109,6 +109,8 @@ export default function ClassicClearPdf({ personal, sections, customize }) {
             <PdfSectionBody section={section} c={c} />
           </View>
         ))}
+
+        <PdfFooter personal={personal} customize={customize} />
       </Page>
     </Document>
   );

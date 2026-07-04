@@ -2,6 +2,7 @@ import React from 'react';
 import { readCustomize, fullNameOf, visibleSectionsOf } from './shared/common.js';
 import SectionBody from './shared/SectionBody.jsx';
 import { formatDateRange } from './shared/formatDate.js';
+import { getContactFields } from './shared/contactFields.js';
 
 export const meta = {
   id: 'compact-ats',
@@ -40,13 +41,11 @@ export default function CompactAts({ personal, sections, customize = {} }) {
   const visibleSections = visibleSectionsOf(sections);
 
   // Plain-text contact line: no icons, ATS parsers prefer raw strings
-  const contactParts = [
-    personal.email,
-    personal.phone,
-    personal.location,
-    c.showLinkedin ? personal.linkedin : null,
-    c.showWebsite ? personal.website : null,
-  ].filter(Boolean);
+  const hiddenKeys = [];
+  if (!c.showLinkedin) hiddenKeys.push('linkedin');
+  if (!c.showWebsite) hiddenKeys.push('website');
+  const contactParts = getContactFields(personal, { hiddenKeys })
+    .map(({ display, label }) => label ? `${label}: ${display}` : display);
 
   const headingStyle = {
     fontSize: c.headingSize,
@@ -88,11 +87,11 @@ export default function CompactAts({ personal, sections, customize = {} }) {
       {visibleSections.map(section => (
         <div key={section.id} style={{ marginBottom: 10 }}>
           <div style={headingStyle}>{section.heading}</div>
-          {section.type === 'experience' || section.type === 'education' ? (
+          {['experience', 'volunteering', 'education'].includes(section.type) ? (
             section.entries.map(entry => {
-              const title = section.type === 'experience' ? entry.title : entry.degree;
-              const org = section.type === 'experience' ? entry.company : entry.school;
-              const current = section.type === 'experience' ? entry.current : false;
+              const title = section.type === 'education' ? entry.degree : entry.title;
+              const org = section.type === 'education' ? entry.school : entry.company;
+              const current = section.type === 'education' ? false : entry.current;
               return (
                 <div key={entry.id} style={{ marginBottom: c.entryGap }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>

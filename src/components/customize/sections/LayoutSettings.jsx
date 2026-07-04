@@ -1,10 +1,14 @@
 import React, { useRef } from 'react';
-import { GripVertical, User, Briefcase, Brain, GraduationCap, Globe, Award, FileText, AlignJustify } from 'lucide-react';
+import {
+  GripVertical, User, Briefcase, Brain, GraduationCap, Globe, Award, FileText, AlignJustify,
+  FolderKanban, HeartHandshake, Trophy, BookOpen, Newspaper, Sparkles, Users
+} from 'lucide-react';
 import Card from '../ui/Card.jsx';
 import { useSections, useActiveTemplate } from '../../../hooks/index.js';
 
 const SECTION_ICONS = {
-  User, Briefcase, Brain, GraduationCap, Globe, Award, FileText
+  User, Briefcase, Brain, GraduationCap, Globe, Award, FileText,
+  FolderKanban, HeartHandshake, Trophy, BookOpen, Newspaper, Sparkles, Users
 };
 
 export default function LayoutSettings({ customize, updateCustomize }) {

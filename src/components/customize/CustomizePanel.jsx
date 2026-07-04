@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useCustomize, useHistory } from '../../hooks/index.js';
 import { RotateCcw } from 'lucide-react';
+import { confirmDialog } from '../ui/dialog.jsx';
 import DocumentSettings from './sections/DocumentSettings.jsx';
 import DesignTemplates from './sections/DesignTemplates.jsx';
 import LayoutSettings from './sections/LayoutSettings.jsx';
@@ -47,20 +48,29 @@ export default function CustomizePanel({ setView }) {
   const { customize, updateCustomize, resetCustomize } = useCustomize();
   const [activeSection, setActiveSection] = useState('document');
   const contentRef = useRef(null);
+  const scrollLockRef = useRef(false);
+  const scrollLockTimer = useRef(null);
 
   useEffect(() => {
     const root = contentRef.current;
     if (!root) return;
+    const visibility = new Map();
     const observer = new IntersectionObserver(
       entries => {
+        if (scrollLockRef.current) return;
         entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const id = entry.target.id.replace('cz-', '');
-            setActiveSection(id);
-          }
+          visibility.set(entry.target.id, entry.intersectionRatio);
         });
+        let bestId = null;
+        let bestRatio = 0;
+        visibility.forEach((ratio, id) => {
+          if (ratio > bestRatio) { bestRatio = ratio; bestId = id; }
+        });
+        if (bestId && bestRatio > 0) {
+          setActiveSection(bestId.replace('cz-', ''));
+        }
       },
-      { root, threshold: 0.3 }
+      { root, rootMargin: '0px 0px -60% 0px', threshold: [0, 0.25, 0.5, 0.75, 1] }
     );
     SIDEBAR_ITEMS.forEach(({ id }) => {
       const el = document.getElementById(`cz-${id}`);
@@ -70,9 +80,14 @@ export default function CustomizePanel({ setView }) {
   }, []);
 
   function scrollTo(id) {
+    setActiveSection(id);
+    scrollLockRef.current = true;
+    clearTimeout(scrollLockTimer.current);
+    scrollLockTimer.current = setTimeout(() => {
+      scrollLockRef.current = false;
+    }, 700);
     const el = document.getElementById(`cz-${id}`);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setActiveSection(id);
   }
 
   return (
@@ -93,10 +108,12 @@ export default function CustomizePanel({ setView }) {
         <div className="cz-reset-row">
           <button
             className="cz-reset-btn"
-            onClick={() => {
-              if (window.confirm('Reset all design settings to the template defaults? Your content is not affected.')) {
-                resetCustomize();
-              }
+            onClick={async () => {
+              const ok = await confirmDialog(
+                'Reset all design settings to the template defaults? Your content is not affected.',
+                { title: 'Reset design', confirmLabel: 'Reset' }
+              );
+              if (ok) resetCustomize();
             }}
           >
             <RotateCcw size={13} />
