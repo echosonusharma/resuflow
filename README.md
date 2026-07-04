@@ -1,6 +1,6 @@
 # Resuflow
 
-Simple resume builder. Free, build as many resumes as you want — all data stays local in your browser.
+Simple resume builder. Free, build as many resumes as you want - all data stays local in your browser.
 
 ## Features
 
@@ -8,7 +8,7 @@ Simple resume builder. Free, build as many resumes as you want — all data stay
 - Customize fonts, colors, spacing, and page format
 - Download as PDF
 - Undo / redo
-- All data stored locally — no account, no server, no tracking
+- All data stored locally - no account, no server, no tracking
 
 ## Usage
 

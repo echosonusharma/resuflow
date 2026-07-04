@@ -24,7 +24,7 @@ export default function LanguagesForm({ sectionId, entry }) {
       </div>
       <div className="form-group">
         <label className="form-label">
-          Proficiency Level — {levelLabels[(entry.level || 3) - 1]}
+          Proficiency Level: {levelLabels[(entry.level || 3) - 1]}
         </label>
         <div className="lang-dots">
           {[1, 2, 3, 4, 5].map(dot => (

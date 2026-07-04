@@ -1,6 +1,6 @@
 import { Font } from '@react-pdf/renderer';
 
-// Local font files via Vite ?url imports — no CDN dependency
+// Local font files via Vite ?url imports - no CDN dependency
 import LatoR   from '@fontsource/lato/files/lato-latin-400-normal.woff?url';
 import LatoB   from '@fontsource/lato/files/lato-latin-700-normal.woff?url';
 import LatoI   from '@fontsource/lato/files/lato-latin-400-italic.woff?url';
@@ -50,11 +50,11 @@ export function parseFontFamily(cssFontStack) {
 }
 
 export function registerFonts() {
-  // Disable word hyphenation — names/titles must never break as "Shar-ma".
+  // Disable word hyphenation - names/titles must never break as "Shar-ma".
   // Overflowing words wrap whole instead.
   Font.registerHyphenationCallback(word => [word]);
 
-  // Check against live FontStore — guards against HMR resetting the store
+  // Check against live FontStore - guards against HMR resetting the store
   // while the module-level flag survives in the old module instance.
   if (Font.getRegisteredFontFamilies().includes('Lato')) return;
 

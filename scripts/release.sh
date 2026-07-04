@@ -30,7 +30,7 @@ fi
 
 # Working tree must be clean
 if [[ -n "$(git status --porcelain)" ]]; then
-  echo "Error: working tree is dirty — commit or stash changes first" >&2
+  echo "Error: working tree is dirty - commit or stash changes first" >&2
   exit 1
 fi
 
@@ -42,7 +42,7 @@ fi
 
 echo "Releasing $TAG..."
 
-# Bump version in package.json (portable — works without npm version flags)
+# Bump version in package.json (portable - works without npm version flags)
 node -e "
 const fs = require('fs');
 const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));

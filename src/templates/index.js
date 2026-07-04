@@ -18,7 +18,7 @@ export function getAllTemplates() {
   return Object.values(TEMPLATES);
 }
 
-// Merge template defaults with user customize — user wins
+// Merge template defaults with user customize - user wins
 export function resolveCustomize(templateMeta, userCustomize) {
   const defaults = templateMeta.defaultCustomize || {};
   return {

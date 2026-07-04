@@ -57,7 +57,7 @@ function SaveErrorBanner() {
   if (!saveError) return null;
   return (
     <div style={{ position: 'fixed', bottom: 16, left: '50%', transform: 'translateX(-50%)', background: '#c0392b', color: '#fff', padding: '8px 16px', borderRadius: 6, fontSize: 13, zIndex: 9999 }}>
-      Save failed — changes may not be saved. {saveError}
+      Save failed. Changes may not be saved. {saveError}
     </div>
   );
 }

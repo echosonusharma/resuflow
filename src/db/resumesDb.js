@@ -45,7 +45,7 @@ export async function getResume(id) {
 }
 
 export async function putResume(doc) {
-  const db = await getDb(); // intentionally let throw — callers handle
+  const db = await getDb(); // intentionally let throw - callers handle
   const next = { ...doc, updatedAt: Date.now() };
   await db.put(STORE, next);
   return next;

@@ -5,7 +5,7 @@ import { getContactFields, displayValue } from '../../shared/contactFields.js';
 import { sectionKind } from '../../shared/common.js';
 
 /**
- * PdfContactRow — renders contact items separated by bullet dividers.
+ * PdfContactRow - renders contact items separated by bullet dividers.
  * Unicode dingbat icons are avoided: they're outside the latin subset of
  * the embedded fonts and render as broken glyphs in the PDF.
  * stacked=true → column, stacked=false → row with wrap
@@ -52,7 +52,7 @@ export function PdfContactRow({ personal, c, iconColor, itemStyle = {}, stacked 
 }
 
 /**
- * PdfFooter — fixed footer on every page: optional text + page numbers.
+ * PdfFooter - fixed footer on every page: optional text + page numbers.
  */
 export function PdfFooter({ personal, customize }) {
   const f = customize?.footer || {};
@@ -86,7 +86,7 @@ export function PdfFooter({ personal, customize }) {
 }
 
 /**
- * PdfSectionBody — renders one section's entries.
+ * PdfSectionBody - renders one section's entries.
  * Props: { section, c, twoColLang }
  */
 export default function PdfSectionBody({ section, c, twoColLang = false }) {

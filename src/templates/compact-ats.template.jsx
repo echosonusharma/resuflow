@@ -96,7 +96,7 @@ export default function CompactAts({ personal, sections, customize = {} }) {
                 <div key={entry.id} style={{ marginBottom: c.entryGap }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
                     <span style={{ fontSize: c.entryHeaderSize }}>
-                      <strong>{title}</strong>{org ? `, ${org}` : ''}{entry.location ? ` — ${entry.location}` : ''}
+                      <strong>{title}</strong>{org ? `, ${org}` : ''}{entry.location ? ` - ${entry.location}` : ''}
                     </span>
                     <span style={{ fontSize: c.smallSize, whiteSpace: 'nowrap' }}>
                       {formatDateRange(entry.startDate, entry.endDate, current, c.dateFormat, c.lang)}
