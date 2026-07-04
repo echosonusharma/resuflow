@@ -6,6 +6,7 @@ const HISTORY_LIMIT = 50;
 const SAVE_DEBOUNCE_MS = 400;
 
 function uid() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 }
 
@@ -91,32 +92,34 @@ const EMPTY_DOC = {
 let saveTimer = null;
 let savePending = false;
 
-async function persistNow(getState) {
+async function persistNow(state) {
   savePending = false;
-  const { present, activeResumeId } = getState();
+  const { present, activeResumeId } = state;
   if (!activeResumeId || !present.id) return;
   try {
     const saved = await putResume(present);
-    // update in-memory updatedAt without triggering history commit
     useResumeStore.setState((s) =>
-      s.present.id === saved.id ? { present: { ...s.present, updatedAt: saved.updatedAt } } : {}
+      s.present.id === saved.id
+        ? { present: { ...s.present, updatedAt: saved.updatedAt }, saveError: null }
+        : {}
     );
   } catch (err) {
     console.error('[resumeStore] save failed', err);
+    useResumeStore.setState({ saveError: err?.message || 'Save failed' });
   }
 }
 
 function scheduleSave(getState) {
   clearTimeout(saveTimer);
   savePending = true;
-  saveTimer = setTimeout(() => persistNow(getState), SAVE_DEBOUNCE_MS);
+  saveTimer = setTimeout(() => persistNow(getState()), SAVE_DEBOUNCE_MS);
 }
 
 // Flush pending edits immediately (leaving editor, tab close).
 export function flushSave() {
   if (!savePending) return;
   clearTimeout(saveTimer);
-  persistNow(useResumeStore.getState);
+  persistNow(useResumeStore.getState());
 }
 
 if (typeof window !== 'undefined') {
@@ -129,6 +132,7 @@ export const useResumeStore = create((set, get) => ({
   future: [],
   activeResumeId: null,
   status: 'idle', // 'idle' | 'loading' | 'ready'
+  saveError: null,
 
   // ── lifecycle ────────────────────────────────────────────────
   async loadResume(id) {

@@ -5,7 +5,6 @@ let showDialog = null;
 function open(config) {
   return new Promise(resolve => {
     if (!showDialog) {
-      // host not mounted yet — fail safe
       resolve(config.kind === 'prompt' ? null : false);
       return;
     }
@@ -28,6 +27,7 @@ export function promptDialog(message, { title = 'Enter a value', defaultValue = 
 export function DialogHost() {
   const [dlg, setDlg] = useState(null);
   const [value, setValue] = useState('');
+  const dialogRef = useRef(null);
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -38,8 +38,30 @@ export function DialogHost() {
     return () => { showDialog = null; };
   }, []);
 
+  // Focus trap
   useEffect(() => {
-    if (dlg?.kind === 'prompt') setTimeout(() => inputRef.current?.select(), 10);
+    if (!dlg || !dialogRef.current) return;
+    const el = dialogRef.current;
+    const focusable = el.querySelectorAll('button, input, [tabindex]:not([tabindex="-1"])');
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    function trapTab(e) {
+      if (e.key !== 'Tab') return;
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last?.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first?.focus(); }
+      }
+    }
+
+    el.addEventListener('keydown', trapTab);
+    if (dlg.kind === 'prompt') {
+      inputRef.current?.select();
+    } else {
+      first?.focus();
+    }
+    return () => el.removeEventListener('keydown', trapTab);
   }, [dlg]);
 
   if (!dlg) return null;
@@ -55,21 +77,37 @@ export function DialogHost() {
     close(dlg.kind === 'prompt' ? value : true);
   }
   function onKeyDown(e) {
-    if (e.key === 'Escape') cancel();
-    if (e.key === 'Enter') confirm();
+    if (e.key === 'Escape') { e.stopPropagation(); cancel(); }
+    if (e.key === 'Enter' && dlg.kind !== 'prompt') { e.stopPropagation(); confirm(); }
   }
 
+  const titleId = 'dialog-title';
+  const msgId = 'dialog-msg';
+
   return (
-    <div className="app-dialog-overlay" onMouseDown={e => { if (e.target === e.currentTarget) cancel(); }} onKeyDown={onKeyDown}>
-      <div className="app-dialog" role="dialog" aria-modal="true">
-        <div className="app-dialog-title">{dlg.title}</div>
-        {dlg.message && <div className="app-dialog-message">{dlg.message}</div>}
+    <div
+      className="app-dialog-overlay"
+      onMouseDown={e => { if (e.target === e.currentTarget) cancel(); }}
+      aria-hidden="false"
+    >
+      <div
+        ref={dialogRef}
+        className="app-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={dlg.message ? msgId : undefined}
+        onKeyDown={onKeyDown}
+      >
+        <div id={titleId} className="app-dialog-title">{dlg.title}</div>
+        {dlg.message && <div id={msgId} className="app-dialog-message">{dlg.message}</div>}
         {dlg.kind === 'prompt' && (
           <input
             ref={inputRef}
             className="app-dialog-input"
             value={value}
             onChange={e => setValue(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') { e.stopPropagation(); confirm(); } }}
             autoFocus
           />
         )}
@@ -78,7 +116,7 @@ export function DialogHost() {
             <button className="app-dialog-btn" onClick={cancel}>Cancel</button>
           )}
           <button
-            className={`app-dialog-btn app-dialog-btn--primary ${dlg.danger ? 'app-dialog-btn--danger' : ''}`}
+            className={`app-dialog-btn app-dialog-btn--primary${dlg.danger ? ' app-dialog-btn--danger' : ''}`}
             onClick={confirm}
             autoFocus={dlg.kind !== 'prompt'}
           >

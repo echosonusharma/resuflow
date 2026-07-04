@@ -5,8 +5,23 @@ import { getTemplate } from '../templates/index.js';
 import TemplatePreview from './TemplatePreview.jsx';
 import TemplatePicker from './TemplatePicker.jsx';
 import NewResumeModal from './NewResumeModal.jsx';
-import { confirmDialog, promptDialog } from './ui/dialog.jsx';
+import { alertDialog, confirmDialog, promptDialog } from './ui/dialog.jsx';
 import ResuflowMark from './ResuflowMark.jsx';
+
+function uid() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+  return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+}
+
+function makeCopyName(baseName, existingNames) {
+  const base = baseName || 'Untitled resume';
+  // Strip trailing " (copy N)" or " (copy)"
+  const stripped = base.replace(/\s+\(copy(?:\s+\d+)?\)$/, '');
+  if (!existingNames.has(`${stripped} (copy)`)) return `${stripped} (copy)`;
+  let n = 2;
+  while (existingNames.has(`${stripped} (copy ${n})`)) n++;
+  return `${stripped} (copy ${n})`;
+}
 
 function formatRelative(ts) {
   if (!ts) return '';
@@ -95,7 +110,12 @@ export default function MyResumes({ onOpen, onCreate }) {
   const [showNew, setShowNew] = useState(false);
 
   async function refresh() {
-    setResumes(await listResumes());
+    try {
+      setResumes(await listResumes());
+    } catch (err) {
+      console.error('[MyResumes] listResumes failed', err);
+      setResumes([]);
+    }
   }
 
   useEffect(() => { refresh(); }, []);
@@ -107,19 +127,28 @@ export default function MyResumes({ onOpen, onCreate }) {
       confirmLabel: 'Rename',
     });
     if (name == null) return;
-    await putResume({ ...doc, name: name.trim() || 'Untitled resume' });
-    refresh();
+    try {
+      await putResume({ ...doc, name: name.trim() || 'Untitled resume' });
+      refresh();
+    } catch (err) {
+      alertDialog('Failed to rename resume.', { title: 'Error' });
+    }
   }
 
   async function handleDuplicate(doc) {
+    const existingNames = new Set((resumes || []).map(r => r.name));
     const copy = {
       ...doc,
-      id: Math.random().toString(36).slice(2, 10) + Date.now().toString(36),
-      name: `${doc.name || 'Untitled resume'} (copy)`,
+      id: uid(),
+      name: makeCopyName(doc.name, existingNames),
       createdAt: Date.now(),
     };
-    await putResume(copy);
-    refresh();
+    try {
+      await putResume(copy);
+      refresh();
+    } catch (err) {
+      alertDialog('Failed to duplicate resume. Storage may be full.', { title: 'Error' });
+    }
   }
 
   async function handleDelete(doc) {
@@ -128,8 +157,12 @@ export default function MyResumes({ onOpen, onCreate }) {
       { title: 'Delete resume', confirmLabel: 'Delete', danger: true }
     );
     if (!ok) return;
-    await deleteResume(doc.id);
-    refresh();
+    try {
+      await deleteResume(doc.id);
+      refresh();
+    } catch (err) {
+      alertDialog('Failed to delete resume.', { title: 'Error' });
+    }
   }
 
   async function handlePickTemplate(templateId) {

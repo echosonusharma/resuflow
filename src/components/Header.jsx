@@ -3,7 +3,7 @@ import { FileText, Palette, Download, ArrowLeft, Sparkles } from 'lucide-react';
 import { usePersonal, useCustomize, useSections, useActiveTemplate } from '../hooks/index.js';
 import { useResumeStore } from '../store/resumeStore.js';
 import { exportPdfReact } from '../utils/exportPdfReact.js';
-
+import { alertDialog } from './ui/dialog.jsx';
 import ResuflowMark from './ResuflowMark.jsx';
 
 export default function Header({ view, setView, onExit }) {
@@ -24,6 +24,7 @@ export default function Header({ view, setView, onExit }) {
       await exportPdfReact({ personal, sections, customize, templateId });
     } catch (err) {
       console.error('PDF generation failed', err);
+      alertDialog(`PDF generation failed: ${err?.message || 'Unknown error'}`, { title: 'Download failed' });
     } finally {
       setDownloading(false);
     }
@@ -51,14 +52,16 @@ export default function Header({ view, setView, onExit }) {
       </nav>
 
       <div className="header-actions">
-        <button
-          className="btn-fill-demo"
-          onClick={() => useResumeStore.getState().fillDemoData()}
-          title="Fill with demo data (testing)"
-        >
-          <Sparkles size={14} />
-          Fill demo
-        </button>
+        {import.meta.env.DEV && (
+          <button
+            className="btn-fill-demo"
+            onClick={() => useResumeStore.getState().fillDemoData()}
+            title="Fill with demo data (testing)"
+          >
+            <Sparkles size={14} />
+            Fill demo
+          </button>
+        )}
         <button
           className="btn-download"
           onClick={handleDownload}
