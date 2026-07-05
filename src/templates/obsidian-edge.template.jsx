@@ -177,7 +177,7 @@ export default function ObsidianEdge({ personal, sections, customize = {} }) {
           const isList = LIST_TYPES.has(section.type);
 
           return (
-            <div key={section.id} style={{ marginBottom: 14 }}>
+            <div key={section.id} style={{ marginBottom: 14 }} data-preview-section="true">
               <div style={headingStyle}>
                 <Icon size={13} style={{ flexShrink: 0 }} />
                 {section.heading}

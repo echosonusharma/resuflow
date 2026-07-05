@@ -95,7 +95,7 @@ export default function SlateSidebar({ personal, sections, customize = {} }) {
         )}
 
         {sidebarSections.map(section => (
-          <div key={section.id} style={{ marginBottom: 18 }}>
+          <div key={section.id} style={{ marginBottom: 18 }} data-preview-section="true">
             <div style={headingBase}>{section.heading}</div>
             <SectionBody section={section} c={c} styles={{ langColumns: '1fr' }} />
           </div>
@@ -124,7 +124,7 @@ export default function SlateSidebar({ personal, sections, customize = {} }) {
         </div>
 
         {mainSections.map(section => (
-          <div key={section.id} style={{ marginBottom: 16 }}>
+          <div key={section.id} style={{ marginBottom: 16 }} data-preview-section="true">
             <div style={headingBase}>{section.heading}</div>
             <SectionBody section={section} c={c} />
           </div>

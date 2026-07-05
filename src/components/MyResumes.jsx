@@ -6,8 +6,9 @@ import TemplatePreview from './TemplatePreview.jsx';
 import TemplatePicker from './TemplatePicker.jsx';
 import NewResumeModal from './NewResumeModal.jsx';
 import { alertDialog, confirmDialog, promptDialog } from './ui/dialog.jsx';
-import { exportResume, importResumeFromFile } from '../utils/importExport.js';
+import { exportResume } from '../utils/importExport.js';
 import AiBuilderModal from './AiBuilderModal.jsx';
+import ImportModal from './ImportModal.jsx';
 import ResuflowMark from './ResuflowMark.jsx';
 
 function uid() {
@@ -114,6 +115,7 @@ export default function MyResumes({ onOpen, onCreate }) {
   const [resumes, setResumes] = useState(null);
   const [showNew, setShowNew] = useState(false);
   const [showAiBuilder, setShowAiBuilder] = useState(false);
+  const [showImport, setShowImport] = useState(false);
 
   async function refresh() {
     try {
@@ -175,17 +177,6 @@ export default function MyResumes({ onOpen, onCreate }) {
     exportResume(doc);
   }
 
-  async function handleImport() {
-    try {
-      const doc = await importResumeFromFile();
-      if (!doc) return;
-      await putResume(doc);
-      refresh();
-    } catch (err) {
-      alertDialog(`Import failed: ${err.message}`, { title: 'Invalid file' });
-    }
-  }
-
   async function handlePickTemplate(templateId) {
     setShowNew(false);
     const id = await onCreate(templateId);
@@ -231,7 +222,7 @@ export default function MyResumes({ onOpen, onCreate }) {
                     <Sparkles size={14} />
                     Build with AI
                   </button>
-                  <button className="btn-import" onClick={handleImport}>
+                  <button className="btn-import" onClick={() => setShowImport(true)}>
                     <Upload size={14} />
                     Import JSON
                   </button>
@@ -271,6 +262,13 @@ export default function MyResumes({ onOpen, onCreate }) {
 
       {showAiBuilder && (
         <AiBuilderModal onClose={() => setShowAiBuilder(false)} />
+      )}
+
+      {showImport && (
+        <ImportModal
+          onClose={() => setShowImport(false)}
+          onImported={refresh}
+        />
       )}
     </div>
   );

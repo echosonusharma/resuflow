@@ -27,15 +27,21 @@ function regenIds(doc) {
 }
 
 function validate(obj) {
-  if (!obj || typeof obj !== 'object') throw new Error('Invalid file: not an object');
-  if (typeof obj.name !== 'string') throw new Error('Invalid file: missing name');
-  if (!Array.isArray(obj.sections)) throw new Error('Invalid file: sections must be an array');
-  if (typeof obj.personal !== 'object') throw new Error('Invalid file: missing personal');
-  return true;
+  if (!obj || typeof obj !== 'object') throw new Error('Invalid JSON: not an object');
+  if (typeof obj.name !== 'string') throw new Error('Invalid JSON: missing "name"');
+  if (!Array.isArray(obj.sections)) throw new Error('Invalid JSON: "sections" must be an array');
+  if (typeof obj.personal !== 'object') throw new Error('Invalid JSON: missing "personal"');
+}
+
+export function parseResumeJson(text) {
+  const raw = JSON.parse(text); // throws SyntaxError on bad JSON
+  validate(raw);
+  if (!KNOWN_TEMPLATES.includes(raw.template)) raw.template = 'classic-clear';
+  const { _schemaVersion, ...docFields } = raw;
+  return regenIds(docFields);
 }
 
 export function exportResume(doc) {
-  // Strip internal fields - id/createdAt/updatedAt are meaningless outside this browser
   const { id, createdAt, updatedAt, ...rest } = doc;
   const exportDoc = {
     _schemaVersion: SCHEMA_VERSION,
@@ -67,27 +73,15 @@ export function importResumeFromFile() {
     input.onchange = () => {
       const file = input.files?.[0];
       if (!file) { resolve(null); return; }
-
       const reader = new FileReader();
       reader.onload = (e) => {
-        try {
-          const raw = JSON.parse(e.target.result);
-          validate(raw);
-          // Normalize template to known value
-          if (!KNOWN_TEMPLATES.includes(raw.template)) raw.template = 'classic-clear';
-          // Strip schema meta, regen IDs to avoid collisions
-          const { _schemaVersion, ...docFields } = raw;
-          const doc = regenIds(docFields);
-          resolve(doc);
-        } catch (err) {
-          reject(err);
-        }
+        try { resolve(parseResumeJson(e.target.result)); }
+        catch (err) { reject(err); }
       };
       reader.onerror = () => reject(new Error('Failed to read file'));
       reader.readAsText(file);
     };
     input.oncancel = () => resolve(null);
-    // Some browsers don't fire oncancel - clean up after short delay
     document.body.appendChild(input);
     input.click();
     setTimeout(() => document.body.removeChild(input), 60_000);

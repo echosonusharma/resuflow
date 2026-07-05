@@ -85,7 +85,7 @@ export default function CompactAts({ personal, sections, customize = {} }) {
       </div>
 
       {visibleSections.map(section => (
-        <div key={section.id} style={{ marginBottom: 10 }}>
+        <div key={section.id} style={{ marginBottom: 10 }} data-preview-section="true">
           <div style={headingStyle}>{section.heading}</div>
           {['experience', 'volunteering', 'education'].includes(section.type) ? (
             section.entries.map(entry => {

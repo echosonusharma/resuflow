@@ -169,7 +169,7 @@ export default function ClassicClear({ personal, sections, customize = {} }) {
         const kind = sectionKind(section.type);
 
         return (
-          <div className="cc-section" key={section.id} style={{ marginBottom: entryGap }}>
+          <div className="cc-section" key={section.id} style={{ marginBottom: entryGap }} data-preview-section="true">
             <div className="cc-section-heading" style={sectionHeadingStyle}>
               {section.heading}
             </div>
