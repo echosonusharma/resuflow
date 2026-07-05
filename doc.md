@@ -1,4 +1,4 @@
-# ResumeFlow — Project Documentation
+# ResumeFlow - Project Documentation
 
 ## Overview
 
@@ -58,7 +58,7 @@ src/
 ├── context/
 │   └── ResumeContext.jsx           useReducer store + localStorage sync
 │
-├── hooks/                          Public API — components use these, not context
+├── hooks/                          Public API - components use these, not context
 │   ├── index.js                    Barrel export
 │   ├── usePersonal.js              { personal, updatePersonal }
 │   ├── useSections.js              { sections, addSection, updateEntry, ... }
@@ -70,12 +70,12 @@ src/
 │   └── demoData.json               Aria Voss fictional demo persona
 │
 ├── utils/
-│   └── exportPdf.js                exportPdf() — multi-page PDF slicing, footer text/page numbers, getPageFormat()
+│   └── exportPdf.js                exportPdf() - multi-page PDF slicing, footer text/page numbers, getPageFormat()
 │
 ├── templates/                      Self-contained template system
 │   ├── index.js                    Registry: getTemplate(), getAllTemplates(), resolveCustomize(), PALETTES
 │   ├── shared/
-│   │   ├── formatDate.js           formatDate(), formatDateRange() — locale-aware via document.language
+│   │   ├── formatDate.js           formatDate(), formatDateRange() - locale-aware via document.language
 │   │   ├── buildStyles.js          buildStyles(customize) → computed style objects
 │   │   ├── common.js               readCustomize(), fullNameOf(), visibleSectionsOf()
 │   │   ├── SectionBody.jsx         Shared per-type entry renderer (used by newer templates)
@@ -93,7 +93,7 @@ src/
 │
 ├── components/
 │   ├── Header.jsx                  Nav tabs, resume name, download button
-│   ├── TemplateSelector.jsx        Overview screen — template grid + category filter
+│   ├── TemplateSelector.jsx        Overview screen - template grid + category filter
 │   │
 │   ├── editor/
 │   │   ├── EditorPanel.jsx         Left panel shell + Add Content picker
@@ -175,7 +175,7 @@ src/
       icon,                    // lucide icon name string
       visible,                 // shown in preview
       entries: [
-        // shape varies by type — see entry shapes below
+        // shape varies by type - see entry shapes below
       ]
     }
   ],
@@ -216,7 +216,7 @@ src/
 }
 ```
 
-`customize` in state is **sparse** — only user-changed keys. `resolveCustomize(templateMeta, state.customize)` merges template defaults + user overrides to produce the full resolved object. Templates always receive the resolved object.
+`customize` in state is **sparse** - only user-changed keys. `resolveCustomize(templateMeta, state.customize)` merges template defaults + user overrides to produce the full resolved object. Templates always receive the resolved object.
 
 ---
 
@@ -254,7 +254,7 @@ export const meta = {
 };
 
 export default function MyTemplate({ personal, sections, customize }) {
-  // customize is always the resolved object — all keys present
+  // customize is always the resolved object - all keys present
   // use inline styles for customize-driven properties
   // use CSS classes (my-*) for fixed structural styles
 }
@@ -328,8 +328,8 @@ const {
 | `TOGGLE_ENTRY_VISIBLE` | `{ sectionId, entryId }` |
 | `REORDER_ENTRIES` | `{ sectionId, fromIndex, toIndex }` |
 | `UPDATE_CUSTOMIZE` | `{ section, data }` |
-| `RESET_CUSTOMIZE` | — (clears all user overrides) |
-| `UNDO` / `REDO` | — (history kept in provider, cap 50 states) |
+| `RESET_CUSTOMIZE` | - (clears all user overrides) |
+| `UNDO` / `REDO` | - (history kept in provider, cap 50 states) |
 
 ---
 
@@ -347,11 +347,11 @@ const {
 
 ## PDF export
 
-`src/utils/exportPdf.js` — shared by the Header Download button and PreviewPanel Export PDF button. `html2canvas` captures `#resume-preview-content` at 2× scale, the canvas is sliced into page-height chunks, and each slice becomes a PDF page (`jsPDF`). Handles:
+`src/utils/exportPdf.js` - shared by the Header Download button and PreviewPanel Export PDF button. `html2canvas` captures `#resume-preview-content` at 2× scale, the canvas is sliced into page-height chunks, and each slice becomes a PDF page (`jsPDF`). Handles:
 
 - **Multi-page**: content taller than one page is split across pages
 - **Page format**: A4 / Letter / A5 from `customize.document.pageFormat` (also resizes the preview sheet)
-- **Footer**: `customize.footer` — page numbers (bottom-right) and footer text (name / email / custom, bottom-center) drawn on every page
+- **Footer**: `customize.footer` - page numbers (bottom-right) and footer text (name / email / custom, bottom-center) drawn on every page
 
 ---
 

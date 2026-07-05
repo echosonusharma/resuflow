@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Plus, MoreVertical, Trash2, Copy, Pencil } from 'lucide-react';
+import { Plus, MoreVertical, Trash2, Copy, Pencil, Download, Upload } from 'lucide-react';
 import { listResumes, deleteResume, putResume } from '../db/resumesDb.js';
 import { getTemplate } from '../templates/index.js';
 import TemplatePreview from './TemplatePreview.jsx';
 import TemplatePicker from './TemplatePicker.jsx';
 import NewResumeModal from './NewResumeModal.jsx';
 import { alertDialog, confirmDialog, promptDialog } from './ui/dialog.jsx';
+import { exportResume, importResumeFromFile } from '../utils/importExport.js';
 import ResuflowMark from './ResuflowMark.jsx';
 
 function uid() {
@@ -32,7 +33,7 @@ function formatRelative(ts) {
   return `edited ${Math.round(diff / day)} days ago`;
 }
 
-function ResumeCard({ doc, onOpen, onRename, onDuplicate, onDelete }) {
+function ResumeCard({ doc, onOpen, onRename, onDuplicate, onExport, onDelete }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -79,6 +80,9 @@ function ResumeCard({ doc, onOpen, onRename, onDuplicate, onDelete }) {
               </button>
               <button onClick={() => { setMenuOpen(false); onDuplicate(doc); }}>
                 <Copy size={14} /> Duplicate
+              </button>
+              <button onClick={() => { setMenuOpen(false); onExport(doc); }}>
+                <Download size={14} /> Export JSON
               </button>
               <button className="danger" onClick={() => { setMenuOpen(false); onDelete(doc); }}>
                 <Trash2 size={14} /> Delete
@@ -165,6 +169,21 @@ export default function MyResumes({ onOpen, onCreate }) {
     }
   }
 
+  function handleExport(doc) {
+    exportResume(doc);
+  }
+
+  async function handleImport() {
+    try {
+      const doc = await importResumeFromFile();
+      if (!doc) return;
+      await putResume(doc);
+      refresh();
+    } catch (err) {
+      alertDialog(`Import failed: ${err.message}`, { title: 'Invalid file' });
+    }
+  }
+
   async function handlePickTemplate(templateId) {
     setShowNew(false);
     const id = await onCreate(templateId);
@@ -200,10 +219,16 @@ export default function MyResumes({ onOpen, onCreate }) {
         ) : (
           <>
             <header className="landing-header">
-              <h1>My Resumes</h1>
-              <p className="landing-subtitle">
-                All data stays in your browser.
-              </p>
+              <div className="landing-header-row">
+                <div>
+                  <h1>My Resumes</h1>
+                  <p className="landing-subtitle">All data stays in your browser.</p>
+                </div>
+                <button className="btn-import" onClick={handleImport}>
+                  <Upload size={14} />
+                  Import JSON
+                </button>
+              </div>
             </header>
             <div className="resume-grid">
               <div className="resume-card">
@@ -220,6 +245,7 @@ export default function MyResumes({ onOpen, onCreate }) {
                   onOpen={onOpen}
                   onRename={handleRename}
                   onDuplicate={handleDuplicate}
+                  onExport={handleExport}
                   onDelete={handleDelete}
                 />
               ))}
