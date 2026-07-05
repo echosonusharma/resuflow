@@ -3,7 +3,7 @@ import { FileText, Palette, Download, ArrowLeft, Sparkles } from 'lucide-react';
 import { usePersonal, useCustomize, useSections, useActiveTemplate } from '../hooks/index.js';
 import { useResumeStore } from '../store/resumeStore.js';
 import { exportPdfReact } from '../utils/exportPdfReact.js';
-import { alertDialog } from './ui/dialog.jsx';
+import { alertDialog, confirmDialog } from './ui/dialog.jsx';
 import ResuflowMark from './ResuflowMark.jsx';
 
 export default function Header({ view, setView, onExit }) {
@@ -52,16 +52,19 @@ export default function Header({ view, setView, onExit }) {
       </nav>
 
       <div className="header-actions">
-        {import.meta.env.DEV && (
-          <button
-            className="btn-fill-demo"
-            onClick={() => useResumeStore.getState().fillDemoData()}
-            title="Fill with demo data (testing)"
-          >
-            <Sparkles size={14} />
-            Fill demo
-          </button>
-        )}
+        <button
+          className="btn-fill-demo"
+          onClick={async () => {
+            const ok = await confirmDialog(
+              'This will overwrite all current content with demo data. This cannot be undone.',
+              { title: 'Fill with demo data?', confirmLabel: 'Fill demo', danger: true }
+            );
+            if (ok) useResumeStore.getState().fillDemoData();
+          }}
+        >
+          <Sparkles size={14} />
+          Fill demo
+        </button>
         <button
           className="btn-download"
           onClick={handleDownload}
