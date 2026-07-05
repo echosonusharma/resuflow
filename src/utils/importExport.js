@@ -38,9 +38,10 @@ export function exportResume(doc) {
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  const safeName = (doc.name || 'resume').replace(/[^a-z0-9_\-]/gi, '_');
+  const safeName = (doc.name || 'Resume').replace(/[^a-z0-9_\-]/gi, '_');
+  const date = new Date().toISOString().slice(0, 10);
   a.href = url;
-  a.download = `${safeName}.json`;
+  a.download = `${safeName}_Resuflow_${date}.json`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

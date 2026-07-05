@@ -24,9 +24,10 @@ export async function exportPdfReact({ personal, sections, customize, templateId
   ).toBlob();
 
   const nameParts = [personal.firstName, personal.lastName].filter(Boolean);
-  const rawName = nameParts.length ? nameParts.join('_') : 'resume';
+  const rawName = nameParts.length ? nameParts.join('_') : 'Resume';
   const safeName = rawName.replace(/[^a-z0-9_\-]/gi, '_');
-  const fileName = `${safeName}_resume.pdf`;
+  const date = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  const fileName = `${safeName}_Resuflow_${date}.pdf`;
 
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
