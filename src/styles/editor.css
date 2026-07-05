@@ -92,21 +92,25 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: 7px 16px;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  border: 1px dashed var(--color-border-dashed);
+  border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: 600;
-  color: var(--color-text-secondary);
-  background: var(--color-surface);
-  border: 1.5px solid var(--color-border);
   cursor: pointer;
   white-space: nowrap;
-  transition: background var(--transition-fast), color var(--transition-fast);
   flex-shrink: 0;
+  transition: background var(--transition-fast), color var(--transition-fast);
 }
 .btn-import:hover {
-  background: var(--color-surface-muted);
+  background: var(--color-primary-soft);
   color: var(--color-text);
+}
+.btn-import:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .tpl-preview-frame {
