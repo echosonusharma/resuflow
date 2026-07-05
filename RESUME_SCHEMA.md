@@ -2,6 +2,8 @@
 
 Generate a resume as a JSON object matching this schema. Return only valid JSON, no markdown fences, no explanation.
 
+All string field values are plain text. Never use markdown syntax inside any field value. No `[text](url)`, no `**bold**`, no backticks, no `mailto:` prefixes.
+
 ---
 
 ## Top-Level Structure
@@ -65,12 +67,12 @@ Generate a resume as a JSON object matching this schema. Return only valid JSON,
 | `firstName` | string | |
 | `lastName` | string | |
 | `title` | string | Job title shown under the name |
-| `email` | string | Rendered as `mailto:` link |
-| `phone` | string | Rendered as `tel:` link |
+| `email` | string | Plain email address only. Example: `aria.voss@example.com` |
+| `phone` | string | Plain phone string only. Example: `+1 (555) 214-8830` |
 | `location` | string | City, Country |
-| `linkedin` | string | Any format: `in/handle`, `linkedin.com/in/handle`, or full URL |
-| `website` | string | Any format: `domain.com` or full URL |
-| `github` | string | Handle, `@handle`, or full URL |
+| `linkedin` | string | Plain string. Any format: `in/handle`, `linkedin.com/in/handle`, or full URL |
+| `website` | string | Plain string. Any format: `domain.com` or full URL. Example: `ariavoss.dev` |
+| `github` | string | Plain string. Handle, `@handle`, or full URL |
 | `nationality` | string | Optional |
 | `dateOfBirth` | string | Optional, format `YYYY-MM-DD` |
 | `visa` | string | Optional |
@@ -258,7 +260,7 @@ All four share identical entry structure.
 | Field | Type | Notes |
 |-------|------|-------|
 | `title` | string | Project name |
-| `link` | string | URL to project or repo |
+| `link` | string | Plain URL only. Example: `https://github.com/user/project` |
 | `startDate` | string | Format `YYYY-MM`. Optional. |
 | `endDate` | string | Format `YYYY-MM`. Empty = ongoing. |
 | `bullets` | string[] | Description bullets |
@@ -376,6 +378,8 @@ Any valid Lucide icon name is accepted.
 
 ## Notes for LLMs
 
+- All string field values are plain text. Never embed markdown inside JSON strings.
+- `email`, `website`, `linkedin`, `github`, `link` must be raw strings. Wrong: `"[me@example.com](mailto:me@example.com)"`. Correct: `"me@example.com"`.
 - Generate realistic bullet points using strong action verbs and metrics.
 - `startDate` / `endDate` must be `YYYY-MM` or empty string. Never `null`.
 - `bullets` must be a non-empty array. Minimum one entry per section.
