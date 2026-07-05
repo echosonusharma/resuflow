@@ -15,6 +15,13 @@
     />
   </head>
   <body>
+    <script>
+      // Decode path redirected from 404.html (GitHub Pages SPA routing)
+      (function () {
+        var p = new URLSearchParams(window.location.search).get('p');
+        if (p) window.history.replaceState(null, '', '/' + p);
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
