@@ -14,9 +14,14 @@ function regenIds(doc) {
     createdAt: now,
     updatedAt: now,
     sections: (doc.sections || []).map(section => ({
+      visible: true,
       ...section,
       id: uid(),
-      entries: (section.entries || []).map(entry => ({ ...entry, id: uid() })),
+      entries: (section.entries || []).map(entry => ({
+        visible: true,
+        ...entry,
+        id: uid(),
+      })),
     })),
   };
 }
@@ -30,9 +35,15 @@ function validate(obj) {
 }
 
 export function exportResume(doc) {
+  // Strip internal fields - id/createdAt/updatedAt are meaningless outside this browser
+  const { id, createdAt, updatedAt, ...rest } = doc;
   const exportDoc = {
     _schemaVersion: SCHEMA_VERSION,
-    ...doc,
+    ...rest,
+    sections: (rest.sections || []).map(({ id: _sid, ...s }) => ({
+      ...s,
+      entries: (s.entries || []).map(({ id: _eid, ...e }) => e),
+    })),
   };
   const json = JSON.stringify(exportDoc, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
@@ -76,7 +87,7 @@ export function importResumeFromFile() {
       reader.readAsText(file);
     };
     input.oncancel = () => resolve(null);
-    // Some browsers don't fire oncancel — clean up after short delay
+    // Some browsers don't fire oncancel - clean up after short delay
     document.body.appendChild(input);
     input.click();
     setTimeout(() => document.body.removeChild(input), 60_000);

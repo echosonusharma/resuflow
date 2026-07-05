@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Plus, MoreVertical, Trash2, Copy, Pencil, Download, Upload } from 'lucide-react';
+import { Plus, MoreVertical, Trash2, Copy, Pencil, Download, Upload, Sparkles } from 'lucide-react';
 import { listResumes, deleteResume, putResume } from '../db/resumesDb.js';
 import { getTemplate } from '../templates/index.js';
 import TemplatePreview from './TemplatePreview.jsx';
@@ -7,6 +7,7 @@ import TemplatePicker from './TemplatePicker.jsx';
 import NewResumeModal from './NewResumeModal.jsx';
 import { alertDialog, confirmDialog, promptDialog } from './ui/dialog.jsx';
 import { exportResume, importResumeFromFile } from '../utils/importExport.js';
+import AiBuilderModal from './AiBuilderModal.jsx';
 import ResuflowMark from './ResuflowMark.jsx';
 
 function uid() {
@@ -112,6 +113,7 @@ function Sidebar() {
 export default function MyResumes({ onOpen, onCreate }) {
   const [resumes, setResumes] = useState(null);
   const [showNew, setShowNew] = useState(false);
+  const [showAiBuilder, setShowAiBuilder] = useState(false);
 
   async function refresh() {
     try {
@@ -224,10 +226,16 @@ export default function MyResumes({ onOpen, onCreate }) {
                   <h1>My Resumes</h1>
                   <p className="landing-subtitle">All data stays in your browser.</p>
                 </div>
-                <button className="btn-import" onClick={handleImport}>
-                  <Upload size={14} />
-                  Import JSON
-                </button>
+                <div className="landing-header-actions">
+                  <button className="btn-ai-builder" onClick={() => setShowAiBuilder(true)}>
+                    <Sparkles size={14} />
+                    Build with AI
+                  </button>
+                  <button className="btn-import" onClick={handleImport}>
+                    <Upload size={14} />
+                    Import JSON
+                  </button>
+                </div>
               </div>
             </header>
             <div className="resume-grid">
@@ -259,6 +267,10 @@ export default function MyResumes({ onOpen, onCreate }) {
           onClose={() => setShowNew(false)}
           onPick={handlePickTemplate}
         />
+      )}
+
+      {showAiBuilder && (
+        <AiBuilderModal onClose={() => setShowAiBuilder(false)} />
       )}
     </div>
   );
