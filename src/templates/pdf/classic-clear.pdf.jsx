@@ -13,6 +13,7 @@ function SectionHeading({ heading, c, headingFont }) {
   const headingLineColor = c.applyTo.headingsLine ? c.accent : '#1a1a2e';
   return (
     <View
+      minPresenceAhead={40}
       style={{
         marginBottom: 10,
         borderBottomWidth: c.hasUnderline ? 2 : 0,

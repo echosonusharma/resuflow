@@ -67,6 +67,7 @@ export default function CompactAtsPdf({ personal, sections, customize }) {
           <View key={section.id} wrap={false} style={{ marginBottom: 10 }}>
             {/* Heading */}
             <View
+              minPresenceAhead={40}
               style={{
                 borderBottomWidth: c.hasUnderline ? 1 : 0,
                 borderBottomColor: '#000',

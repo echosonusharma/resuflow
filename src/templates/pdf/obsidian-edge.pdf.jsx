@@ -146,8 +146,8 @@ export default function ObsidianEdgePdf({ personal, sections, customize }) {
             const kind = sectionKind(section.type);
             const isList = LIST_TYPES.has(section.type);
             return (
-              <View key={section.id} style={{ marginBottom: 12 }}>
-                <View style={{ marginBottom: 6 }}>
+              <View key={section.id} wrap={false} style={{ marginBottom: 12 }}>
+                <View style={{ marginBottom: 6 }} minPresenceAhead={40}>
                   <Text style={headingStyle}>{section.heading}</Text>
                 </View>
                 {kind === 'experience' && section.entries.map(entry =>

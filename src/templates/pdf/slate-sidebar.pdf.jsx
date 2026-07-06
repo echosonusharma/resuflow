@@ -25,7 +25,7 @@ export default function SlateSidebarPdf({ personal, sections, customize }) {
 
   function SidebarHeading({ heading }) {
     return (
-      <View style={{ marginBottom: 8 }}>
+      <View style={{ marginBottom: 8 }} minPresenceAhead={40}>
         <Text
           style={{
             fontSize: c.headingSize,
@@ -45,6 +45,7 @@ export default function SlateSidebarPdf({ personal, sections, customize }) {
   function MainHeading({ heading }) {
     return (
       <View
+        minPresenceAhead={40}
         style={{
           marginBottom: 10,
           borderBottomWidth: c.hasUnderline ? 1 : 0,
@@ -123,7 +124,7 @@ export default function SlateSidebarPdf({ personal, sections, customize }) {
 
           {/* Sidebar sections */}
           {sidebarSections.map(section => (
-            <View key={section.id} style={{ marginBottom: 14 }}>
+            <View key={section.id} wrap={false} style={{ marginBottom: 14 }}>
               <SidebarHeading heading={section.heading} />
               <PdfSectionBody section={section} c={c} twoColLang={true} />
             </View>
@@ -171,7 +172,7 @@ export default function SlateSidebarPdf({ personal, sections, customize }) {
 
           {/* Main sections */}
           {mainSections.map(section => (
-            <View key={section.id} style={{ marginBottom: c.entryGap }}>
+            <View key={section.id} wrap={false} style={{ marginBottom: c.entryGap }}>
               <MainHeading heading={section.heading} />
               <PdfSectionBody section={section} c={c} />
             </View>

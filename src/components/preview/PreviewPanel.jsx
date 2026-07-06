@@ -30,11 +30,13 @@ function computePageSlices(measureEl, pageH) {
   const slices = [];
   let pageStart = 0;
   let first = true;
+  let maxSBot = 0;
 
   for (const section of sections) {
     const rect = section.getBoundingClientRect();
     const sTop = Math.round(rect.top - containerTop);
     const sBot = Math.round(rect.bottom - containerTop);
+    maxSBot = Math.max(maxSBot, sBot);
     const b = budget(first);
     const pageEnd = pageStart + b;
 
@@ -56,12 +58,17 @@ function computePageSlices(measureEl, pageH) {
     }
   }
 
+  // Use last section's bottom + continuation pad as effective height.
+  // Avoids template bottom padding creating spurious empty page.
+  // Adding CONTINUATION_PAD ensures the topPad offset on page 2+ doesn't clip the last section.
+  const effectiveH = maxSBot ? maxSBot + CONTINUATION_PAD : totalH;
+
   // Fill remaining content
   let s = pageStart;
   let f = first;
-  while (s < totalH) {
+  while (s < effectiveH) {
     const b = budget(f);
-    slices.push({ start: s, end: Math.min(s + b, totalH) });
+    slices.push({ start: s, end: Math.min(s + b, effectiveH) });
     s += b;
     f = false;
   }

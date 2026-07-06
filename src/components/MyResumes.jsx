@@ -202,10 +202,24 @@ export default function MyResumes({ onOpen, onCreate }) {
         {isEmpty ? (
           <>
             <header className="landing-header">
-              <h1>Start building your resume</h1>
-              <p className="landing-subtitle">
-                Choose a design you like. You can customize or switch it later.
-              </p>
+              <div className="landing-header-row">
+                <div>
+                  <h1>Start building your resume</h1>
+                  <p className="landing-subtitle">
+                    Choose a design you like. You can customize or switch it later.
+                  </p>
+                </div>
+                <div className="landing-header-actions">
+                  <button className="btn-ai-builder" onClick={() => setShowAiBuilder(true)}>
+                    <Sparkles size={14} />
+                    Build with AI
+                  </button>
+                  <button className="btn-import" onClick={() => setShowImport(true)}>
+                    <Upload size={14} />
+                    Import JSON
+                  </button>
+                </div>
+              </div>
             </header>
             <TemplatePicker onPick={handlePickTemplate} />
           </>

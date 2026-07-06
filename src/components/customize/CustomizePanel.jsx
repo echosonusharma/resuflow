@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useCustomize, useHistory } from '../../hooks/index.js';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, X } from 'lucide-react';
 import { confirmDialog } from '../ui/dialog.jsx';
+import { useResumeStore } from '../../store/resumeStore.js';
+import TemplatePicker from '../TemplatePicker.jsx';
 import DocumentSettings from './sections/DocumentSettings.jsx';
 import DesignTemplates from './sections/DesignTemplates.jsx';
 import LayoutSettings from './sections/LayoutSettings.jsx';
@@ -47,6 +49,7 @@ function UndoRedoBar() {
 export default function CustomizePanel({ setView }) {
   const { customize, updateCustomize, resetCustomize } = useCustomize();
   const [activeSection, setActiveSection] = useState('document');
+  const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const contentRef = useRef(null);
   const scrollLockRef = useRef(false);
   const scrollLockTimer = useRef(null);
@@ -121,7 +124,7 @@ export default function CustomizePanel({ setView }) {
           </button>
         </div>
         <DocumentSettings customize={customize} updateCustomize={updateCustomize} />
-        <DesignTemplates setView={setView} />
+        <DesignTemplates onBrowse={() => setShowTemplatePicker(true)} />
         <LayoutSettings customize={customize} updateCustomize={updateCustomize} />
         <FontSizeSettings customize={customize} updateCustomize={updateCustomize} />
         <SpacingSettings customize={customize} updateCustomize={updateCustomize} />
@@ -137,6 +140,27 @@ export default function CustomizePanel({ setView }) {
       </div>
 
       <UndoRedoBar />
+
+      {showTemplatePicker && (
+        <div className="tpl-modal-backdrop" onClick={() => setShowTemplatePicker(false)}>
+          <div className="tpl-switch-modal" onClick={e => e.stopPropagation()}>
+            <div className="tpl-switch-header">
+              <span className="tpl-switch-title">Switch Template</span>
+              <button className="tpl-modal-close" onClick={() => setShowTemplatePicker(false)} aria-label="Close">
+                <X size={20} />
+              </button>
+            </div>
+            <TemplatePicker
+              onPick={(id) => {
+                useResumeStore.getState().setTemplate(id);
+                setShowTemplatePicker(false);
+              }}
+              showDetail={false}
+              gridClassName="template-grid--modal"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
