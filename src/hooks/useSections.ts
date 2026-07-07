@@ -1,4 +1,4 @@
-import { useResumeStore } from '../store/resumeStore.js';
+import { useResumeStore } from '../store/resumeStore';
 
 export function useSections() {
   const sections = useResumeStore(s => s.present.sections);

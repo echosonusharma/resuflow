@@ -1,5 +1,5 @@
-import { useResumeStore } from '../store/resumeStore.js';
-import { getTemplate, resolveCustomize } from '../templates/index.js';
+import { useResumeStore } from '../store/resumeStore';
+import { getTemplate, resolveCustomize } from '../templates/index';
 
 export function useCustomize() {
   const templateId = useResumeStore(s => s.present.template);

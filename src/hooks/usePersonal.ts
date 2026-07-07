@@ -1,4 +1,4 @@
-import { useResumeStore } from '../store/resumeStore.js';
+import { useResumeStore } from '../store/resumeStore';
 
 export function usePersonal() {
   const personal = useResumeStore(s => s.present.personal);

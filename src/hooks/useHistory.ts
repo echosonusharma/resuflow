@@ -1,4 +1,4 @@
-import { useResumeStore } from '../store/resumeStore.js';
+import { useResumeStore } from '../store/resumeStore';
 
 export function useHistory() {
   const undo = useResumeStore(s => s.undo);
