@@ -1,4 +1,4 @@
-const LOCALES = {
+const LOCALES: Record<string, string> = {
   'English (UK)': 'en-GB',
   'English (US)': 'en-US',
   'Spanish': 'es',
@@ -6,7 +6,7 @@ const LOCALES = {
   'German': 'de',
 };
 
-const PRESENT = {
+const PRESENT: Record<string, string> = {
   'es': 'Actualidad',
   'fr': 'Présent',
   'de': 'Heute',
@@ -14,14 +14,15 @@ const PRESENT = {
 
 const MONTHS_EN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-export function formatDate(dateStr, current, fmt = 'MMM YYYY', language) {
-  const locale = LOCALES[language] || 'en-GB';
+export function formatDate(dateStr: string, current?: boolean, fmt: string = 'MMM YYYY', language?: string): string {
+  const locale = (language && LOCALES[language]) || 'en-GB';
   if (current) return PRESENT[locale] || 'Present';
   if (!dateStr) return '';
   const [year, month] = dateStr.split('-');
+  if (!year) return '';
   if (!month) return year;
   const m = parseInt(month, 10);
-  let monthShort = MONTHS_EN[m - 1];
+  let monthShort = MONTHS_EN[m - 1] ?? '';
   if (locale !== 'en-GB' && locale !== 'en-US') {
     try {
       monthShort = new Intl.DateTimeFormat(locale, { month: 'short' }).format(new Date(+year, m - 1, 1));
@@ -34,7 +35,7 @@ export function formatDate(dateStr, current, fmt = 'MMM YYYY', language) {
   return `${monthShort} ${year}`;
 }
 
-export function formatDateRange(start, end, current, fmt, language) {
+export function formatDateRange(start: string, end: string, current?: boolean, fmt?: string, language?: string): string {
   const s = formatDate(start, false, fmt, language);
   const e = formatDate(end, current, fmt, language);
   if (!s && !e) return '';

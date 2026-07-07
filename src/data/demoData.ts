@@ -1,4 +1,13 @@
-{
+import type { Customize, PersonalInfo, Section, TemplateId } from '../types';
+
+interface DemoData {
+  template: TemplateId;
+  personal: PersonalInfo;
+  sections: Section[];
+  customize: Customize;
+}
+
+const demoData: DemoData = {
   "template": "classic-clear",
   "personal": {
     "firstName": "Aria",
@@ -72,10 +81,30 @@
       "icon": "Brain",
       "visible": true,
       "entries": [
-        { "id": "entry-skill-1", "visible": true, "category": "Languages", "items": "TypeScript, Go, Rust, Python, SQL" },
-        { "id": "entry-skill-2", "visible": true, "category": "Frontend", "items": "React, Next.js, Vite, Tailwind, Zustand, Playwright" },
-        { "id": "entry-skill-3", "visible": true, "category": "Backend & Infra", "items": "Node.js, Go Fiber, PostgreSQL, Redis, Kafka, ClickHouse, Docker, Kubernetes, AWS" },
-        { "id": "entry-skill-4", "visible": true, "category": "Practices", "items": "System design, observability (OpenTelemetry), TDD, DORA metrics, incident review" }
+        {
+          "id": "entry-skill-1",
+          "visible": true,
+          "category": "Languages",
+          "items": "TypeScript, Go, Rust, Python, SQL"
+        },
+        {
+          "id": "entry-skill-2",
+          "visible": true,
+          "category": "Frontend",
+          "items": "React, Next.js, Vite, Tailwind, Zustand, Playwright"
+        },
+        {
+          "id": "entry-skill-3",
+          "visible": true,
+          "category": "Backend & Infra",
+          "items": "Node.js, Go Fiber, PostgreSQL, Redis, Kafka, ClickHouse, Docker, Kubernetes, AWS"
+        },
+        {
+          "id": "entry-skill-4",
+          "visible": true,
+          "category": "Practices",
+          "items": "System design, observability (OpenTelemetry), TDD, DORA metrics, incident review"
+        }
       ]
     },
     {
@@ -107,9 +136,24 @@
       "icon": "Globe",
       "visible": true,
       "entries": [
-        { "id": "entry-lang-1", "visible": true, "language": "Portuguese", "level": 5 },
-        { "id": "entry-lang-2", "visible": true, "language": "English", "level": 5 },
-        { "id": "entry-lang-3", "visible": true, "language": "Spanish", "level": 3 }
+        {
+          "id": "entry-lang-1",
+          "visible": true,
+          "language": "Portuguese",
+          "level": 5
+        },
+        {
+          "id": "entry-lang-2",
+          "visible": true,
+          "language": "English",
+          "level": 5
+        },
+        {
+          "id": "entry-lang-3",
+          "visible": true,
+          "language": "Spanish",
+          "level": 3
+        }
       ]
     },
     {
@@ -119,10 +163,24 @@
       "icon": "Award",
       "visible": true,
       "entries": [
-        { "id": "entry-cert-1", "visible": true, "name": "AWS Certified Solutions Architect – Associate", "issuer": "Amazon Web Services", "date": "2024-03" },
-        { "id": "entry-cert-2", "visible": true, "name": "CKA: Certified Kubernetes Administrator", "issuer": "CNCF", "date": "2023-08" }
+        {
+          "id": "entry-cert-1",
+          "visible": true,
+          "name": "AWS Certified Solutions Architect – Associate",
+          "issuer": "Amazon Web Services",
+          "date": "2024-03"
+        },
+        {
+          "id": "entry-cert-2",
+          "visible": true,
+          "name": "CKA: Certified Kubernetes Administrator",
+          "issuer": "CNCF",
+          "date": "2023-08"
+        }
       ]
     }
   ],
   "customize": {}
-}
+};
+
+export default demoData;

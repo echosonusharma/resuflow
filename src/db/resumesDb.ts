@@ -1,14 +1,23 @@
-import { openDB } from 'idb';
+import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
+import type { SavedResume } from '../types';
 
 const DB_NAME = 'resuflow';
 const DB_VERSION = 1;
 const STORE = 'resumes';
 
-let dbPromise;
+interface ResuflowDB extends DBSchema {
+  resumes: {
+    key: string;
+    value: SavedResume;
+    indexes: { updatedAt: number };
+  };
+}
 
-function getDb() {
+let dbPromise: Promise<IDBPDatabase<ResuflowDB>> | null = null;
+
+function getDb(): Promise<IDBPDatabase<ResuflowDB>> {
   if (!dbPromise) {
-    dbPromise = openDB(DB_NAME, DB_VERSION, {
+    dbPromise = openDB<ResuflowDB>(DB_NAME, DB_VERSION, {
       upgrade(db) {
         if (!db.objectStoreNames.contains(STORE)) {
           const store = db.createObjectStore(STORE, { keyPath: 'id' });
@@ -23,7 +32,7 @@ function getDb() {
   return dbPromise;
 }
 
-export async function listResumes() {
+export async function listResumes(): Promise<SavedResume[]> {
   try {
     const db = await getDb();
     const all = await db.getAll(STORE);
@@ -34,7 +43,7 @@ export async function listResumes() {
   }
 }
 
-export async function getResume(id) {
+export async function getResume(id: string): Promise<SavedResume | undefined> {
   try {
     const db = await getDb();
     return await db.get(STORE, id);
@@ -44,14 +53,14 @@ export async function getResume(id) {
   }
 }
 
-export async function putResume(doc) {
+export async function putResume(doc: SavedResume): Promise<SavedResume> {
   const db = await getDb(); // intentionally let throw - callers handle
   const next = { ...doc, updatedAt: Date.now() };
   await db.put(STORE, next);
   return next;
 }
 
-export async function deleteResume(id) {
+export async function deleteResume(id: string): Promise<void> {
   try {
     const db = await getDb();
     await db.delete(STORE, id);
@@ -61,7 +70,7 @@ export async function deleteResume(id) {
   }
 }
 
-export async function count() {
+export async function count(): Promise<number> {
   try {
     const db = await getDb();
     return await db.count(STORE);

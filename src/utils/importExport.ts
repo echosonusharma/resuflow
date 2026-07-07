@@ -1,13 +1,25 @@
-const SCHEMA_VERSION = 1;
-const KNOWN_TEMPLATES = ['classic-clear', 'slate-sidebar', 'compact-ats', 'obsidian-edge'];
+import type { Resume, TemplateId } from '../types';
 
-function uid() {
+const SCHEMA_VERSION = 1;
+const KNOWN_TEMPLATES: TemplateId[] = ['classic-clear', 'slate-sidebar', 'compact-ats', 'obsidian-edge'];
+
+function uid(): string {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 }
 
-function regenIds(doc) {
+interface RawResume {
+  name: string;
+  template: TemplateId;
+  personal: object;
+  sections: Array<{ entries?: object[] } & Record<string, unknown>>;
+  [key: string]: unknown;
+}
+
+function regenIds(doc: RawResume): Resume {
   const now = Date.now();
+  // Runtime validation is intentionally shallow — sections/entries are
+  // trusted after the shape checks in validate().
   return {
     ...doc,
     id: uid(),
@@ -23,25 +35,26 @@ function regenIds(doc) {
         id: uid(),
       })),
     })),
-  };
+  } as unknown as Resume;
 }
 
-function validate(obj) {
+function validate(obj: unknown): asserts obj is RawResume {
   if (!obj || typeof obj !== 'object') throw new Error('Invalid JSON: not an object');
-  if (typeof obj.name !== 'string') throw new Error('Invalid JSON: missing "name"');
-  if (!Array.isArray(obj.sections)) throw new Error('Invalid JSON: "sections" must be an array');
-  if (typeof obj.personal !== 'object') throw new Error('Invalid JSON: missing "personal"');
+  const o = obj as Record<string, unknown>;
+  if (typeof o.name !== 'string') throw new Error('Invalid JSON: missing "name"');
+  if (!Array.isArray(o.sections)) throw new Error('Invalid JSON: "sections" must be an array');
+  if (typeof o.personal !== 'object') throw new Error('Invalid JSON: missing "personal"');
 }
 
-export function parseResumeJson(text) {
-  const raw = JSON.parse(text); // throws SyntaxError on bad JSON
+export function parseResumeJson(text: string): Resume {
+  const raw: unknown = JSON.parse(text); // throws SyntaxError on bad JSON
   validate(raw);
   if (!KNOWN_TEMPLATES.includes(raw.template)) raw.template = 'classic-clear';
   const { _schemaVersion, ...docFields } = raw;
-  return regenIds(docFields);
+  return regenIds(docFields as RawResume);
 }
 
-export function exportResume(doc) {
+export function exportResume(doc: Resume): void {
   const { id, createdAt, updatedAt, ...rest } = doc;
   const exportDoc = {
     _schemaVersion: SCHEMA_VERSION,
@@ -65,7 +78,7 @@ export function exportResume(doc) {
   setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
 
-export function importResumeFromFile() {
+export function importResumeFromFile(): Promise<Resume | null> {
   return new Promise((resolve, reject) => {
     const input = document.createElement('input');
     input.type = 'file';
@@ -75,7 +88,7 @@ export function importResumeFromFile() {
       if (!file) { resolve(null); return; }
       const reader = new FileReader();
       reader.onload = (e) => {
-        try { resolve(parseResumeJson(e.target.result)); }
+        try { resolve(parseResumeJson(e.target?.result as string)); }
         catch (err) { reject(err); }
       };
       reader.onerror = () => reject(new Error('Failed to read file'));
