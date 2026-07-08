@@ -130,3 +130,9 @@ export interface Resume {
 
 /** A resume persisted in IndexedDB always has an id. */
 export type SavedResume = Resume & { id: string };
+
+/** Shared props for all entry form components. */
+export interface EntryFormProps<T extends Entry> {
+  sectionId: string;
+  entry: T;
+}

@@ -1,4 +1,4 @@
-import type { EntryMap, Resume, SectionOf, SectionType, TemplateId } from '../types';
+import type { EntryMap, SavedResume, SectionOf, SectionType, TemplateId } from '../types';
 
 function uid(): string {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
@@ -43,7 +43,7 @@ function section<T extends SectionType>(type: T, heading: string, icon: string):
 
 export function createEmptyResume(
   { name = 'Untitled resume', template = 'classic-clear' }: { name?: string; template?: TemplateId } = {},
-): Resume {
+): SavedResume {
   const now = Date.now();
   return {
     id: uid(),

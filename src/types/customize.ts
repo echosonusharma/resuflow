@@ -100,6 +100,15 @@ export interface Customize {
 /** Output of resolveCustomize: every group present (fields still optional). */
 export type ResolvedCustomize = Required<Customize>;
 
+/** Signature of the `updateCustomize` function from `useCustomize`. */
+export type UpdateCustomize = <K extends keyof Customize>(section: K, data: Partial<NonNullable<Customize[K]>>) => void;
+
+/** Shared props for all customize section panel components. */
+export interface CustomizeSectionProps {
+  customize: ResolvedCustomize;
+  updateCustomize: UpdateCustomize;
+}
+
 export interface Palette {
   accent: string;
   text: string;
