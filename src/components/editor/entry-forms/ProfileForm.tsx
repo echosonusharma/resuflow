@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSections } from '../../../hooks/index.js';
 import FormGroup from './FormGroup.jsx';
+import RichTextEditor from './RichTextEditor.jsx';
 import type { EntryFormProps, ProfileEntry } from '../../../types';
 
 export default function ProfileForm({ sectionId, entry }: EntryFormProps<ProfileEntry>) {
@@ -12,12 +13,12 @@ export default function ProfileForm({ sectionId, entry }: EntryFormProps<Profile
     <div className="entry-form">
       <div className="entry-form-row single">
         <FormGroup label="Profile Summary" fullWidth>
-          <textarea
-            className="form-textarea"
+          <RichTextEditor
+            key={entry.id}
             value={entry.content}
-            onChange={e => update({ content: e.target.value })}
+            onChange={content => update({ content })}
             placeholder="Write a short professional summary about yourself..."
-            rows={5}
+            minHeight={100}
           />
         </FormGroup>
       </div>

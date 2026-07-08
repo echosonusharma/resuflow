@@ -2,6 +2,7 @@ import React from 'react';
 import { X, Plus } from 'lucide-react';
 import { useSections } from '../../../hooks/index.js';
 import FormGroup from './FormGroup.jsx';
+import RichTextEditor from './RichTextEditor.jsx';
 import type { EntryFormProps, ExperienceEntry } from '../../../types';
 
 export default function ExperienceForm({ sectionId, entry }: EntryFormProps<ExperienceEntry>) {
@@ -86,12 +87,13 @@ export default function ExperienceForm({ sectionId, entry }: EntryFormProps<Expe
         <div className="bullets-container">
           {(entry.bullets || ['']).map((b, i) => (
             <div className="bullet-row" key={i}>
-              <textarea
-                className="form-textarea"
+              <RichTextEditor
+                key={`${entry.id}-${i}`}
                 value={b}
-                onChange={e => updateBullet(i, e.target.value)}
+                onChange={val => updateBullet(i, val)}
                 placeholder={`Bullet point ${i + 1}`}
-                rows={2}
+                compact
+                minHeight={52}
               />
               <button
                 className="btn-remove-bullet"

@@ -1,4 +1,5 @@
 import { type CSSProperties, type ReactNode } from 'react';
+import { stripHtml } from '../../utils/stripHtml.js';
 import { formatDate, formatDateRange } from './formatDate';
 import { displayValue } from './contactFields';
 import type { ReadCustomize, Section } from '../../types';
@@ -54,12 +55,12 @@ export default function SectionBody({ section, c, styles = {} }: SectionBodyProp
   const bulletColor = c.applyTo.dots ? c.accent : 'inherit';
 
   const renderBullets = (entry: DatedEntry) =>
-    (entry.bullets?.filter(Boolean).length ?? 0) > 0 && (
+    (entry.bullets?.filter(b => stripHtml(b)).length ?? 0) > 0 && (
       <ul style={{ listStyle: 'none', padding: 0, margin: '4px 0 0' }}>
-        {entry.bullets?.filter(Boolean).map((b, i) => (
-          <li key={i} style={{ ...st.text, marginBottom: 2 }}>
-            {c.bullet && <span style={{ marginRight: 6, color: bulletColor }}>{c.bullet}</span>}
-            {b}
+        {entry.bullets?.filter(b => stripHtml(b)).map((b, i) => (
+          <li key={i} style={{ ...st.text, marginBottom: 2, display: 'flex', alignItems: 'flex-start' }}>
+            {c.bullet && <span style={{ marginRight: 6, color: bulletColor, flexShrink: 0 }}>{c.bullet}</span>}
+            <span dangerouslySetInnerHTML={{ __html: b }} />
           </li>
         ))}
       </ul>
@@ -91,7 +92,12 @@ export default function SectionBody({ section, c, styles = {} }: SectionBodyProp
     case 'profile':
     case 'custom':
       return section.entries.map(entry => (
-        <p key={entry.id} style={{ ...st.text, marginBottom: c.entryGap }}>{entry.content}</p>
+        <p
+          key={entry.id}
+          style={{ ...st.text, marginBottom: c.entryGap }}
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: entry.content || '' }}
+        />
       ));
 
     case 'experience':

@@ -3,6 +3,7 @@ import { View, Text, Link } from '@react-pdf/renderer';
 import type { Style } from '@react-pdf/types';
 import { formatDate, formatDateRange } from '../../shared/formatDate';
 import { getContactFields, displayValue } from '../../shared/contactFields';
+import { stripHtml } from '../../../utils/stripHtml.js';
 import type { Customize, LanguageEntry, PersonalInfo, ReadCustomize, Section } from '../../../types';
 
 /** ReadCustomize plus per-template color overrides consumed by PDF partials. */
@@ -142,10 +143,11 @@ export default function PdfSectionBody({ section, c, twoColLang = false }: PdfSe
   };
 
   const renderBullets = (entry: { bullets?: string[] }) => {
-    if (!entry.bullets || !entry.bullets.filter(Boolean).length) return null;
+    const items = (entry.bullets || []).map(b => stripHtml(b)).filter(Boolean);
+    if (!items.length) return null;
     return (
       <View style={{ marginTop: 3 }}>
-        {entry.bullets.filter(Boolean).map((b, i) => (
+        {items.map((b, i) => (
           <View key={i} style={{ flexDirection: 'row', marginBottom: 2 }}>
             {c.bullet ? (
               <Text style={{ fontSize: c.bodySize, color: bulletColor, marginRight: 5, width: 10 }}>
@@ -188,7 +190,7 @@ export default function PdfSectionBody({ section, c, twoColLang = false }: PdfSe
         <View>
           {section.entries.map(entry => (
             <Text key={entry.id} style={{ ...textStyle, marginBottom: c.entryGap }}>
-              {entry.content}
+              {stripHtml(entry.content)}
             </Text>
           ))}
         </View>

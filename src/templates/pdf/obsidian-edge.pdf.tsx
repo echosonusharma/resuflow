@@ -6,6 +6,7 @@ import { readCustomize, fullNameOf, visibleSectionsOf, sectionKind } from '../sh
 import PdfSectionBody, { PdfFooter } from './shared/PdfSectionBody.jsx';
 import { getContactFields } from '../shared/contactFields.js';
 import { formatDateRange } from '../shared/formatDate.js';
+import { stripHtml } from '../../utils/stripHtml.js';
 import { getTemplate } from '../index.js';
 import type { TemplateProps, Section, ExperienceEntry, EducationEntry, SkillsEntry, LanguageEntry, CertEntry, ReadCustomize } from '../../types';
 
@@ -64,9 +65,9 @@ export default function ObsidianEdgePdf({ personal, sections, customize }: Templ
           {entry.location ? `  |  ${entry.location}` : ''}
         </Text>
       </View>
-      {entry.bullets?.filter(Boolean).length > 0 && (
+      {entry.bullets?.map(b => stripHtml(b)).filter(Boolean).length > 0 && (
         <View style={{ marginTop: 2 }}>
-          {entry.bullets!.filter(Boolean).map((b: string, i: number) => (
+          {entry.bullets!.map(stripHtml).filter(Boolean).map((b: string, i: number) => (
             <View key={i} style={{ flexDirection: 'row', marginBottom: 1 }}>
               {c.bullet ? <Text style={{ fontSize: c.bodySize, marginRight: 5, width: 9 }}>{c.bullet}</Text> : null}
               <Text style={{ fontSize: c.bodySize, lineHeight: c.lineHeight, flex: 1 }}>{b}</Text>
